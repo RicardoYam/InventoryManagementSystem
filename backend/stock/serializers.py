@@ -43,11 +43,17 @@ class ProductSerializer(serializers.ModelSerializer):
         for stock_data in stocks_data:
             stock_id = stock_data.get("id")
             if stock_id:
-                stock = Stock.objects.get(id=stock_id, product=instance)
-                stock.color = stock_data.get("color", stock.color)
-                stock.size = stock_data.get("size", stock.size)
-                stock.quantity = stock_data.get("quantity", stock.quantity)
-                stock.save()
-            else:
-                Stock.objects.create(Product=instance, **stock_data)
+                try:
+                    stock = Stock.objects.get(id=stock_id, product=instance)
+                    quantity = stock_data.get("quantity", stock.quantity)
+
+                    if quantity == 0:
+                        stock.delete()
+                    else:
+                        stock.color = stock_data.get("color", stock.color)
+                        stock.size = stock_data.get("size", stock.size)
+                        stock.quantity = quantity
+                        stock.save()
+                except Stock.DoesNotExist:
+                    print(f"Stock ID {stock_id} not found for product {instance.name}")
         return instance
