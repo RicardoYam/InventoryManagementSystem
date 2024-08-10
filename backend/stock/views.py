@@ -3,6 +3,11 @@ from stock.serializers import ProductSerializer
 from stock.models import Stock, Product
 
 
-class ProductListCreateView(generics.ListCreateAPIView):
+class StockListCreateView(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+class StockRetrieveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer

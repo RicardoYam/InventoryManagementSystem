@@ -21,6 +21,15 @@ class Order(models.Model):
     )
     create_time = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = "order"
+        verbose_name = "Order"
+        verbose_name_plural = "Order"
+        ordering = ["-create_time"]
+
+    def __str__(self):
+        return "Ordered by customer %s, total %s" % (self.customer.name, self.total)
+
 
 class OrderItem(models.Model):
 
@@ -31,3 +40,15 @@ class OrderItem(models.Model):
         Order, on_delete=models.CASCADE, null=True, blank=True, related_name="items"
     )
     quantity = models.IntegerField()
+
+    class Meta:
+        db_table = "order_item"
+        verbose_name = "Order Item"
+        verbose_name_plural = "Order Item"
+
+    def __str__(self):
+        return "Product: %s, Quantity: %s for Order ID: %s" % (
+            self.product.name,
+            self.quantity,
+            self.order.id,
+        )

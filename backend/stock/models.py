@@ -22,13 +22,22 @@ class Product(models.Model):
         SHOES = ("SHOES", _("Shoes"))
 
     name = models.CharField(max_length=50)
-    tag = models.CharField(max_length=15, choices=Type)
+    type = models.CharField(max_length=15, choices=Type)
     # max_digits is INCLUDING decimal_places
     purchased_price = models.DecimalField(max_digits=5, decimal_places=2)
     selling_price = models.DecimalField(max_digits=5, decimal_places=2)
     image_name = models.CharField(max_length=50)
     image_url = models.CharField(max_length=255)
     image_type = models.CharField(max_length=5)
+
+    class Meta:
+        db_table = "product"
+        verbose_name = "Product"
+        verbose_name_plural = "Product"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
 
 
 class Stock(models.Model):
@@ -49,3 +58,12 @@ class Stock(models.Model):
     )
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "stock"
+        verbose_name = "Stock"
+        verbose_name_plural = "Stock"
+        ordering = ["-create_time"]
+
+    def __str__(self):
+        return self.color + " " + self.size + " " + self.quantity
