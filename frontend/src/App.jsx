@@ -8,7 +8,7 @@ import {
 import "./App.css";
 import Sidebar, { SidebarItem } from "./components/sidebar";
 
-function App() {
+export default function App() {
   return (
     <main className="App flex">
       <Sidebar>
@@ -35,5 +35,3 @@ function App() {
     </main>
   );
 }
-
-export default App;

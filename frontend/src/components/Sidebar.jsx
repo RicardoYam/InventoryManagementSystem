@@ -1,12 +1,21 @@
-import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
+import {
+  ChevronFirst,
+  ChevronLast,
+  LogOut,
+  MoreVertical,
+  Settings,
+} from "lucide-react";
 import { useState, useContext, createContext } from "react";
+import Dropdown, { DropdownItem } from "./Dropdown";
+import useClickOutside from "../hooks/useClickOutside";
 
 const SidebarContext = createContext();
 export default function Sidebar({ children }) {
   const [expanded, setExpanded] = useState(true);
+  const dropRef = useClickOutside(() => setExpanded(false));
 
   return (
-    <aside className="h-screen">
+    <aside className="h-screen" ref={dropRef}>
       <nav className="h-full flex flex-col bg-white border-r shadow-sm">
         <div className="p-4 pb-2 flex justify-center items-center">
           <img
@@ -42,7 +51,20 @@ export default function Sidebar({ children }) {
               <h4 className="font-semibold">Manni</h4>
               <span className="text-xs text-gray-500">Admin</span>
             </div>
-            <MoreVertical size={20} />
+            <Dropdown
+              trigger={
+                <button>
+                  <MoreVertical size={20} />
+                </button>
+              }
+            >
+              <DropdownItem>
+                <Settings size={20} /> Settings
+              </DropdownItem>
+              <DropdownItem>
+                <LogOut size={20} /> Log out
+              </DropdownItem>
+            </Dropdown>
           </div>
         </div>
       </nav>
