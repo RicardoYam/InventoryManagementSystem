@@ -56,7 +56,7 @@ export default function App() {
         </div>
       </Sidebar>
 
-      <main>
+      <main className="h-screen w-screen">
         <Outlet />
       </main>
     </div>
