@@ -16,7 +16,7 @@ export default function Dropdown({ children, trigger }) {
         <div className="fixed">
           <ul
             className={`
-            min-w-max absolute right-0 bottom-0 
+            min-w-max absolute right-0 bottom-0
             bg-white divide-y divide-gray-100 rounded-lg shadow
             overflow-hidden`}
           >
