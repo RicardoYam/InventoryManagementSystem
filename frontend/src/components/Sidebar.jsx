@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 const SidebarContext = createContext();
 export default function Sidebar({ children }) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const dropRef = useClickOutside(() => setExpanded(false));
 
   return (
