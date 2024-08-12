@@ -76,7 +76,7 @@ export default function Sidebar({ children }) {
 export function SidebarItem({ icon, text, active, alert }) {
   const expanded = useContext(SidebarContext);
   return (
-    <Link to={`${text.toLowerCase()}`}>
+    <Link to={"dashboard" === text.toLowerCase() ? "" : text.toLowerCase()}>
       <li
         className={`
         relative flex items-center py-2 px-3 my-1

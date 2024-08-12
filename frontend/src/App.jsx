@@ -1,64 +1,24 @@
-import {
-  BarChart3,
-  Boxes,
-  LayoutDashboard,
-  Package,
-  UserCircle,
-} from "lucide-react";
 import "./App.css";
-import Sidebar, { SidebarItem } from "./components/sidebar";
-import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Layout from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
+import Customers from "./pages/Customers.jsx";
+import Statisitcs from "./pages/Statistics.jsx";
+import Inventory from "./pages/Inventory.jsx";
+import Orders from "./pages/Orders.jsx";
 
 export default function App() {
-  const [item, setItem] = useState("Dashboard");
-  const handleClicked = (item) => {
-    setItem(item);
-  };
-
   return (
-    <div className="App">
-      <Sidebar>
-        <div onClick={() => handleClicked("Dashboard")}>
-          <SidebarItem
-            icon={<LayoutDashboard size={20} />}
-            text={"Dashboard"}
-            active={item === "Dashboard"}
-          ></SidebarItem>
-        </div>
-        <div onClick={() => handleClicked("Statistics")}>
-          <SidebarItem
-            icon={<BarChart3 size={20} />}
-            text={"Statistics"}
-            active={item === "Statistics"}
-          ></SidebarItem>
-        </div>
-        <div onClick={() => handleClicked("Customers")}>
-          <SidebarItem
-            icon={<UserCircle size={20} />}
-            text={"Customers"}
-            active={item === "Customers"}
-          ></SidebarItem>
-        </div>
-        <div onClick={() => handleClicked("Inventory")}>
-          <SidebarItem
-            icon={<Boxes size={20} />}
-            text={"Inventory"}
-            active={item === "Inventory"}
-          ></SidebarItem>
-        </div>
-        <div onClick={() => handleClicked("Orders")}>
-          <SidebarItem
-            icon={<Package size={20} />}
-            text={"Orders"}
-            active={item === "Orders"}
-          ></SidebarItem>
-        </div>
-      </Sidebar>
-
-      <main className="h-screen w-screen">
-        <Outlet />
-      </main>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="customers" element={<Customers />} />
+          <Route path="statistics" element={<Statisitcs />} />
+          <Route path="inventory" element={<Inventory />} />
+          <Route path="orders" element={<Orders />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }

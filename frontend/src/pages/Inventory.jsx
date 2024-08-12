@@ -6,7 +6,7 @@ import Stock from "../components/stock";
 
 export default function Inventory() {
   return (
-    <div className="h-full flex flex-col p-4 shadow-sm w-full">
+    <div className="flex flex-col p-4 shadow-sm w-full">
       <div className="flex justify-between items-center bg-white rounded-t-lg px-4 py-2">
         <div>
           <h1 className="text-ms font-semibold">Inventory</h1>
