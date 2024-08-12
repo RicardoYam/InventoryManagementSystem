@@ -29,18 +29,18 @@ function Layout() {
         <SidebarItem
           icon={<UserCircle size={20} />}
           text={"Customers"}
-          active={currentPath === "Customers"}
+          active={currentPath === "customers"}
         ></SidebarItem>
 
         <SidebarItem
           icon={<Boxes size={20} />}
           text={"Inventory"}
-          active={currentPath === "Inventory"}
+          active={currentPath === "inventory"}
         ></SidebarItem>
         <SidebarItem
           icon={<Package size={20} />}
           text={"Orders"}
-          active={currentPath === "Orders"}
+          active={currentPath === "orders"}
         ></SidebarItem>
       </Sidebar>
 
