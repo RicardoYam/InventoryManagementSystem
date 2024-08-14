@@ -41,10 +41,8 @@ function Layout() {
         ))}
       </Sidebar>
 
-      <div className="w-screen">
-        <div className="w-full p-2 shadow-sm md:px-6">
-          <Outlet />
-        </div>
+      <div className="w-full p-2 md:px-6">
+        <Outlet />
       </div>
     </div>
   );
