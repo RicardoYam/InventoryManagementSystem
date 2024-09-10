@@ -5,13 +5,13 @@ function RecentOrder({ order }) {
   const getStatusClasses = (status) => {
     switch (status) {
       case "Paid":
-        return "w-14 bg-green-200 text-green-500 py-1 px-2";
+        return "w-10 bg-green-200 text-green-500 py-1 px-2 sm:w-14";
       case "Unpaid":
-        return "w-20 bg-red-200 text-red-500 py-1 px-2";
+        return "w-14 bg-red-200 text-red-500 py-1 px-1 sm:w-20";
       case "Refunded":
-        return "w-24 bg-blue-200 text-blue-500 py-1 px-2";
+        return "w-16 bg-blue-200 text-blue-500 py-1 sm:w-24";
       default:
-        return "w-14 bg-green-200 text-green-500 py-1 px-2";
+        return "w-14 bg-green-200 text-green-500 py-1 px-2 sm:w-14";
     }
   };
   return (
