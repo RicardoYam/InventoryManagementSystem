@@ -7,6 +7,7 @@ import {
   UserCircle,
 } from "lucide-react";
 import Sidebar, { SidebarItem } from "./Sidebar";
+import Topbar, { TopbarItem } from "./Topbar";
 import { Outlet, useLocation } from "react-router-dom";
 
 function Layout() {
@@ -29,17 +30,32 @@ function Layout() {
     { id: 5, name: "Orders", icon: <Package size={20} />, path: "orders" },
   ];
   return (
-    <div className="flex">
-      <Sidebar>
-        {SIDEBAR_LINKS.map((link) => (
-          <SidebarItem
-            key={link.id}
-            icon={link.icon}
-            text={link.name}
-            active={currentPath === link.path}
-          ></SidebarItem>
-        ))}
-      </Sidebar>
+    <div className="flex flex-col sm:flex-row">
+      <div className="hidden sm:block">
+        <Sidebar>
+          {SIDEBAR_LINKS.map((link) => (
+            <SidebarItem
+              key={link.id}
+              icon={link.icon}
+              text={link.name}
+              active={currentPath === link.path}
+            ></SidebarItem>
+          ))}
+        </Sidebar>
+      </div>
+
+      <div className="h-14 block sm:hidden">
+        <Topbar>
+          {SIDEBAR_LINKS.map((link) => (
+            <TopbarItem
+              key={link.id}
+              icon={link.icon}
+              text={link.name}
+              active={currentPath === link.path}
+            ></TopbarItem>
+          ))}
+        </Topbar>
+      </div>
 
       <div className="w-full p-2 md:px-6">
         <Outlet />
