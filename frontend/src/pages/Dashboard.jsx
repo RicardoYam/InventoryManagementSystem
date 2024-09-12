@@ -1,8 +1,9 @@
 import WeeklySales from "../components/WeeklySales";
 import MonthlySales from "../components/MonthlySales";
 import { Link } from "react-router-dom";
-import RecentOrder from "../components/RecentOrder";
-import RecentProduct from "../components/RecentProduct";
+import Invoice from "../components/Invoice";
+import Product from "../components/Product";
+import { CirclePlus } from "lucide-react";
 
 export default function Dashboard() {
   const orders = [
@@ -26,6 +27,13 @@ export default function Dashboard() {
       date: "8 Jul 2021",
       amount: 100,
       status: "Unpaid",
+    },
+    {
+      id: 4,
+      customer: "Joy Biden",
+      date: "1 Jul 2022",
+      amount: 152,
+      status: "Paid",
     },
   ];
 
@@ -53,57 +61,71 @@ export default function Dashboard() {
     },
   ];
   return (
-    <>
+    <div className="p-2 md:px-6">
       <div className="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         <WeeklySales />
         <MonthlySales />
       </div>
 
-      <div className="my-4 px-8 py-4 bg-white rounded-3xl shadow">
-        <div className="flex justify-between items-center">
-          <span className="text-lg font-semibold">Invoices</span>
-          <span className="text-xs text-gray-500 underline p-1">
-            <Link to={"orders"}>See All</Link>
-          </span>
-        </div>
-
-        <span className="text-xs text-gray-500">3,251 invoices</span>
-
-        <div className="grid grid-cols-5 gap-4 py-2 text-xs text-gray-500 mt-4">
-          <span className="text-xs text-gray-500">Customer name</span>
-          <span className="text-xs text-gray-500">Date</span>
-          <span className="text-xs text-gray-500">Amount</span>
-          <span className="text-xs text-gray-500">Status</span>
-          <span className="text-xs text-gray-500">Options</span>
-        </div>
-
-        {orders.map((order) => (
-          <RecentOrder key={order.id} order={order} />
-        ))}
-      </div>
-
-      <div className="max-sm:hidden">
-        <div className="flex justify-between items-center mt-4">
-          <span className="text-lg font-semibold">Products</span>
-          <span className="text-xs text-gray-500 underline hover:bg-indigo-50 rounded-lg p-1">
-            <Link to={"inventory"}>See All</Link>
-          </span>
-        </div>
-
-        <div className="my-4 px-4 bg-white rounded-lg shadow">
-          <div className="grid grid-cols-4 gap-4 text-center py-2 text-xs sm:text-sm font-semibold">
-            <span />
-            <span>Product</span>
-            <span>Quantity</span>
-            <span>Price</span>
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="px-8 py-4 bg-white rounded-3xl shadow">
+          <div className="flex justify-between items-center">
+            <span className="text-lg font-semibold">Invoices</span>
+            <span className="text-xs text-gray-500 underline p-1">
+              <Link to={"orders"}>See All</Link>
+            </span>
           </div>
 
-          <hr />
+          <div className="flex justify-between">
+            <span className="text-xs text-gray-500">3,251 invoices</span>
+            {/* <button className="flex bg-indigo-700 text-white rounded-xl p-2 space-x-1 justify-center items-center">
+            <CirclePlus size={15} />
+            <span className="text-sm">Create</span>
+          </button> */}
+          </div>
+
+          <div className="grid grid-cols-5 gap-4 py-2 text-xs text-gray-500 mt-4">
+            <span className="text-xs text-gray-500">Customer name</span>
+            <span className="text-xs text-gray-500">Date</span>
+            <span className="text-xs text-gray-500">Amount</span>
+            <span className="text-xs text-gray-500">Status</span>
+            <span className="text-xs text-gray-500">Options</span>
+          </div>
+
+          {orders.map((order) => (
+            <Invoice key={order.id} order={order} />
+          ))}
+        </div>
+
+        {/* Product */}
+        <div className="px-8 py-4 bg-white rounded-3xl shadow">
+          <div className="flex justify-between items-center">
+            <span className="text-lg font-semibold">Products</span>
+            <span className="text-xs text-gray-500 underline p-1">
+              <Link to={"orders"}>See All</Link>
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-xs text-gray-500">1,591 products</span>
+            {/* <button className="flex bg-indigo-700 text-white rounded-xl p-2 space-x-1 justify-center items-center">
+            <CirclePlus size={15} />
+            <span className="text-sm">Create</span>
+          </button> */}
+          </div>
+
+          <div className="grid grid-cols-4 gap-4 py-2 text-xs text-gray-500 mt-4">
+            <span className="text-xs text-gray-500">Product</span>
+            <span className="text-xs text-gray-500">Price</span>
+            <span className="text-xs text-gray-500">Quantity</span>
+            <span className="text-xs text-gray-500">Options</span>
+          </div>
+
           {products.map((product) => (
-            <RecentProduct key={product.id} product={product} />
+            <Product key={product.id} product={product} />
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

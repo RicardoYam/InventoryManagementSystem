@@ -1,7 +1,7 @@
 import React from "react";
 import { Ellipsis } from "lucide-react";
 
-function RecentOrder({ order }) {
+function Invoice({ order }) {
   const getStatusClasses = (status) => {
     switch (status) {
       case "Paid":
@@ -33,4 +33,4 @@ function RecentOrder({ order }) {
   );
 }
 
-export default RecentOrder;
+export default Invoice;
