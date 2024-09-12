@@ -17,7 +17,7 @@ export default function Sidebar({ children }) {
 
   return (
     <aside className="h-screen" ref={dropRef}>
-      <nav className="h-full flex flex-col bg-white border-r shadow-sm">
+      <nav className="h-full flex flex-col bg-gray-50 border-r shadow-sm">
         <div className="p-4 pb-2 flex justify-center items-center">
           <img
             src="https://img.logoipsum.com/243.svg"
@@ -28,7 +28,7 @@ export default function Sidebar({ children }) {
           />
           <button
             onClick={() => setExpanded((current) => !current)}
-            className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
+            className="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200"
           >
             {expanded ? <ChevronFirst /> : <ChevronLast />}
           </button>
@@ -79,7 +79,7 @@ export function SidebarItem({ icon, text, active, alert }) {
     <Link to={"dashboard" === text.toLowerCase() ? "" : text.toLowerCase()}>
       <li
         className={`
-        relative flex items-center py-2 px-3 my-1
+        relative flex items-center py-2 px-3 my-1 z-50
         font-medium rounded-md cursor-pointer
         transition-colors group
         ${

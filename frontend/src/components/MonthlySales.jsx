@@ -109,7 +109,7 @@ export default function MonthlySales() {
   }, [options]);
   return (
     <div>
-      <div class="w-full bg-white rounded-3xl shadow dark:bg-gray-800">
+      <div class="w-full bg-white rounded-3xl shadow border border-gray-200">
         <div class="flex justify-between p-4 md:p-6 pb-0 md:pb-0">
           <div>
             <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">

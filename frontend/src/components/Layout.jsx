@@ -57,7 +57,7 @@ function Layout() {
         </Topbar>
       </div>
 
-      <div className="w-full">
+      <div className="w-full p-2 md:px-6">
         <Outlet />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Ellipsis } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 
 function Product({ product }) {
   return (
@@ -10,9 +10,14 @@ function Product({ product }) {
       </div>
       <span>{product.quantity}</span>
       <span>${product.price}</span>
-      <button>
-        <Ellipsis />
-      </button>
+      <div className="flex gap-4">
+        <button>
+          <Edit size={20} />
+        </button>
+        <button>
+          <Trash2 size={20} />
+        </button>
+      </div>
     </div>
   );
 }

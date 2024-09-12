@@ -3,7 +3,7 @@ import MonthlySales from "../components/MonthlySales";
 import { Link } from "react-router-dom";
 import Invoice from "../components/Invoice";
 import Product from "../components/Product";
-import { CirclePlus } from "lucide-react";
+import { Search, Moon } from "lucide-react";
 
 export default function Dashboard() {
   const orders = [
@@ -61,14 +61,37 @@ export default function Dashboard() {
     },
   ];
   return (
-    <div className="p-2 md:px-6">
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div>
+      <div className="flex justify-between items-center mt-4 font-semibold">
+        <h1 className="text-3xl">Overview</h1>
+
+        <div className="hidden sm:flex">
+          <div className="flex-grow-1 mx-8">
+            <div className="relative">
+              <Search className="absolute left-3 top-2" />
+              <input
+                type="text"
+                placeholder="Search here..."
+                className="bg-white text-black rounded-full pl-10 pr-4 py-2 w-full focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div>
+            <button className="border-2 p-2 rounded-xl">
+              <Moon />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
         <WeeklySales />
         <MonthlySales />
       </div>
 
       <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div className="px-8 py-4 bg-white rounded-3xl shadow">
+        <div className="px-8 py-4 bg-white border border-gray-200 rounded-3xl shadow">
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold">Invoices</span>
             <span className="text-xs text-gray-500 underline p-1">
@@ -89,7 +112,6 @@ export default function Dashboard() {
             <span className="text-xs text-gray-500">Date</span>
             <span className="text-xs text-gray-500">Amount</span>
             <span className="text-xs text-gray-500">Status</span>
-            <span className="text-xs text-gray-500">Options</span>
           </div>
 
           {orders.map((order) => (
@@ -98,7 +120,7 @@ export default function Dashboard() {
         </div>
 
         {/* Product */}
-        <div className="px-8 py-4 bg-white rounded-3xl shadow">
+        <div className="px-8 py-4 bg-white border border-gray-200 rounded-3xl shadow">
           <div className="flex justify-between items-center">
             <span className="text-lg font-semibold">Products</span>
             <span className="text-xs text-gray-500 underline p-1">
@@ -118,7 +140,6 @@ export default function Dashboard() {
             <span className="text-xs text-gray-500">Product</span>
             <span className="text-xs text-gray-500">Price</span>
             <span className="text-xs text-gray-500">Quantity</span>
-            <span className="text-xs text-gray-500">Options</span>
           </div>
 
           {products.map((product) => (
