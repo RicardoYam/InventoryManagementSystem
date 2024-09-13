@@ -6,17 +6,17 @@ class CustomerGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = "__all__"
+        extra_kwargs = {
+            "email": {"required": False, "allow_blank": True},
+            "phone": {"required": False, "allow_blank": True},
+            "name": {"required": True},
+        }
 
-
-class CustomerGetLiteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
-        fields = ["id", "name", "level", "points", "create_time"]
-        read_only_fields = ["id", "name", "level", "points", "create_time"]
-
-
-class CustomerPostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Customer
-        fields = ["id", "name", "email", "phone"]
-        read_only_fields = ["id"]
+    def validate(self, data):
+        if not data.get("name"):
+            raise serializers.ValidationError("You must provide name!")
+        if not data.get("email") and not data.get("phone"):
+            raise serializers.ValidationError(
+                "You must provide at least email or phone!"
+            )
+        return data

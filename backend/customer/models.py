@@ -21,8 +21,8 @@ class Customer(models.Model):
     )
     points = models.IntegerField(default=0)
     credit = models.IntegerField(default=0)
-    email = models.CharField(max_length=254, unique=True)
-    phone = PhoneNumberField(region="AU")
+    email = models.CharField(max_length=254, unique=True, null=True, blank=True)
+    phone = PhoneNumberField(region="AU", null=True, blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
 
@@ -34,6 +34,11 @@ class Customer(models.Model):
 
     # override save function
     def save(self, *args, **kwargs):
+        if self.email == "":
+            self.email = None
+        if self.phone == "":
+            self.phone = None
+
         if 1000 <= self.points < 3000:
             self.level = self.Level.GOLD
         elif 3000 <= self.points < 7000:
