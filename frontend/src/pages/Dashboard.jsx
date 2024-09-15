@@ -130,10 +130,6 @@ export default function Dashboard() {
 
           <div className="flex justify-between">
             <span className="text-xs text-gray-500">1,591 products</span>
-            {/* <button className="flex bg-indigo-700 text-white rounded-xl p-2 space-x-1 justify-center items-center">
-            <CirclePlus size={15} />
-            <span className="text-sm">Create</span>
-          </button> */}
           </div>
 
           <div className="grid grid-cols-4 gap-4 py-2 text-xs text-gray-500 mt-4">

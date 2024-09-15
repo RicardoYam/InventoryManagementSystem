@@ -1,98 +1,210 @@
-import React, { useState } from "react";
-import { Plus, Search, SlidersHorizontal } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import {
+  Plus,
+  Search,
+  SlidersHorizontal,
+  ChevronRight,
+  ChevronLeft,
+  X,
+  CircleAlert,
+} from "lucide-react";
 import Customer from "../components/Customer";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { fetchCustomers, createCustomer } from "../api/customers";
 
 export default function Customers() {
-  const customers = [
-    {
-      id: 1,
-      customer: "Manni Zhang",
-      points: "671",
-      level: "silver",
-      last_transaction: "30 Aug 2021",
-    },
-    {
-      id: 2,
-      customer: "Shixun Li",
-      points: "0",
-      level: "silver",
-      last_transaction: "29 Aug 2021",
-    },
-    {
-      id: 3,
-      customer: "Tuntun",
-      points: "1028",
-      level: "gold",
-      last_transaction: "19 Aug 2021",
-    },
-    {
-      id: 4,
-      customer: "Mianmian",
-      points: "8788",
-      level: "Platinum",
-      last_transaction: "5 Aug 2021",
-    },
-    {
-      id: 5,
-      customer: "John Doe",
-      points: "500",
-      level: "bronze",
-      last_transaction: "12 Aug 2021",
-    },
-    {
-      id: 6,
-      customer: "Jane Doe",
-      points: "150",
-      level: "gold",
-      last_transaction: "10 Aug 2021",
-    },
-  ];
-
-  const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  const [nextPage, setNextPage] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(2); // Default to 2 items per page
+  const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [name, setName] = useState("");
 
-  const totalPages = Math.ceil(customers.length / itemsPerPage);
+  const [newCustomer, setNewCustomer] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
-  // Get customers for the current page
-  const indexOfLastCustomer = currentPage * itemsPerPage;
-  const indexOfFirstCustomer = indexOfLastCustomer - itemsPerPage;
-  const currentCustomers = customers.slice(
-    indexOfFirstCustomer,
-    indexOfLastCustomer
-  );
+  useEffect(() => {
+    const getCustomers = async () => {
+      try {
+        const params = new URLSearchParams({
+          name,
+          page: currentPage,
+        }).toString();
+
+        const data = await fetchCustomers(params);
+
+        setCustomers(data.results);
+        setTotalCustomers(data.count);
+        setNextPage(data.next);
+        setPrevPage(data.previous);
+      } catch (err) {
+        console.error("Error fetching customers:", err);
+      }
+    };
+    getCustomers();
+  }, [currentPage, name]);
 
   const toggleFlyout = () => {
     setIsFlyoutOpen(!isFlyoutOpen);
   };
 
+  const toggleFormOpen = () => {
+    setIsFormOpen(!isFormOpen);
+    setNewCustomer({
+      name: "",
+      email: "",
+      phone: "",
+    });
+    setErrorMessage("");
+  };
+
+  const handleClickOutside = (e) => {
+    if (e.target.id === "modal-overlay") {
+      setIsFormOpen(false);
+      setNewCustomer({
+        name: "",
+        email: "",
+        phone: "",
+      });
+      setErrorMessage("");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewCustomer((prevCustomer) => ({
+      ...prevCustomer,
+      [name]: value,
+    }));
+  };
+
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!newCustomer.name) {
+      setErrorMessage("Name is required.");
+      return;
+    }
+    if (!newCustomer.email && !newCustomer.phone) {
+      setErrorMessage("At least one of Email or Phone is required.");
+      return;
+    }
+    try {
+      const createdCustomer = await createCustomer(newCustomer);
+      setNewCustomer({
+        name: "",
+        email: "",
+        phone: "",
+      });
+      setErrorMessage("");
+      setIsFormOpen(false);
+
+      const updatedCustomers = await fetchCustomers();
+      setCustomers(updatedCustomers.results);
+      setTotalCustomers(updatedCustomers.count);
+    } catch (error) {
+      console.error("Error creating customer:", error);
+    }
+  };
+
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+    if (nextPage) {
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+    if (prevPage) {
+      setCurrentPage((prev) => prev - 1);
     }
-  };
-
-  const handleItemsPerPageChange = (event) => {
-    setItemsPerPage(Number(event.target.value));
-    setCurrentPage(1); // Reset to first page when items per page change
   };
 
   return (
     <div className="flex flex-col pt-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-semibold">Customer</h1>
-        <button className="flex text-white bg-blue-500 text-md rounded-3xl p-2 gap-1 items-center justify-center">
+        <button
+          className="flex text-white bg-blue-500 text-md rounded-3xl p-2 gap-1 items-center justify-center"
+          onClick={toggleFormOpen}
+        >
           <Plus size={17} />
           Create
         </button>
+
+        {isFormOpen && (
+          <div
+            id="modal-overlay"
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+            onClick={handleClickOutside}
+          >
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md relative">
+              <span
+                className="absolute top-2 right-4 text-black text-xl cursor-pointer"
+                onClick={toggleFormOpen}
+              >
+                <X />
+              </span>
+              <h2 className="text-2xl font-semibold mb-4">Add Customer</h2>
+              <form onSubmit={handleSubmit}>
+                <label className="block mb-2">
+                  Name:
+                  <input
+                    type="text"
+                    name="name"
+                    value={newCustomer.name}
+                    onChange={handleInputChange}
+                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
+                  />
+                </label>
+                <label className="block mb-2">
+                  Email:
+                  <input
+                    type="email"
+                    name="email"
+                    value={newCustomer.email}
+                    onChange={handleInputChange}
+                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
+                  />
+                </label>
+                <label className="block mb-2">
+                  Phone:
+                  <input
+                    type="text"
+                    name="phone"
+                    value={newCustomer.phone}
+                    onChange={handleInputChange}
+                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
+                  />
+                </label>
+                {errorMessage && (
+                  <div className="flex mt-4 p-2 gap-2 rounded-lg bg-red-200">
+                    <CircleAlert className="text-red-500" />
+                    <span className="text-red-500">{errorMessage}</span>
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white py-2 px-4 mt-4 rounded-lg hover:bg-blue-600"
+                >
+                  Submit
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
+
+      <span className="text-xs text-gray-500 mt-2">
+        {totalCustomers} customers
+      </span>
 
       <div className="flex flex-col mt-8 rounded-2xl border border-gray-200">
         <div className="flex items-center justify-between border-b">
@@ -101,6 +213,8 @@ export default function Customers() {
             <input
               type="text"
               placeholder="Search by customer name"
+              value={name}
+              onChange={handleNameChange}
               className="bg-white text-black pl-10 pr-4 py-2 w-full border-none border-transparent focus:border-transparent focus:ring-0"
             />
           </div>
@@ -132,38 +246,38 @@ export default function Customers() {
           </div>
         </div>
 
-        {/* Customer List */}
         <div>
           <div className="grid grid-cols-5 p-4 text-xs text-gray-500 border-b justify-center items-center">
-            <span className="text-md text-gray-500">Customer name</span>
+            <span className="text-md text-gray-500">Customer</span>
             <span className="text-md text-gray-500">Points</span>
             <span className="text-md text-gray-500">Level</span>
             <span className="text-md text-gray-500">Last Transaction</span>
           </div>
 
-          {currentCustomers.map((customer) => (
-            <Customer key={customer.id} customer={customer} />
+          {customers.map((customer) => (
+            <Customer
+              key={customer.id}
+              customer={customer}
+              setCustomers={setCustomers}
+            />
           ))}
         </div>
 
-        {/* Pagination */}
         <div className="flex justify-between items-center px-4 py-2">
-          <div className="text-gray-500">{`Total pages: ${totalPages}`}</div>
-
+          <div className="text-gray-500">{`Page: ${currentPage}`}</div>
           <div className="flex items-center space-x-2">
             <button
               className="border p-2 rounded-md disabled:opacity-50"
               onClick={handlePrevPage}
-              disabled={currentPage === 1}
+              disabled={!prevPage}
             >
               <ChevronLeft />
             </button>
 
-            <div className="text-gray-500">{`${currentPage}/${totalPages}`}</div>
             <button
               className="border p-2 rounded-md disabled:opacity-50"
               onClick={handleNextPage}
-              disabled={currentPage === totalPages}
+              disabled={!nextPage}
             >
               <ChevronRight />
             </button>
