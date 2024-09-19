@@ -101,13 +101,9 @@ export default function Dashboard() {
 
           <div className="flex justify-between">
             <span className="text-xs text-gray-500">3,251 invoices</span>
-            {/* <button className="flex bg-indigo-700 text-white rounded-xl p-2 space-x-1 justify-center items-center">
-            <CirclePlus size={15} />
-            <span className="text-sm">Create</span>
-          </button> */}
           </div>
 
-          <div className="grid grid-cols-5 gap-4 py-2 text-xs text-gray-500 mt-4">
+          <div className="grid grid-cols-5 py-2 text-xs text-gray-500 mt-4">
             <span className="text-xs text-gray-500">Customer name</span>
             <span className="text-xs text-gray-500">Date</span>
             <span className="text-xs text-gray-500">Amount</span>
@@ -132,7 +128,7 @@ export default function Dashboard() {
             <span className="text-xs text-gray-500">1,591 products</span>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 py-2 text-xs text-gray-500 mt-4">
+          <div className="grid grid-cols-4 py-2 text-xs text-gray-500 mt-4">
             <span className="text-xs text-gray-500">Product</span>
             <span className="text-xs text-gray-500">Price</span>
             <span className="text-xs text-gray-500">Quantity</span>

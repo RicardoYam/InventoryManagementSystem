@@ -21,6 +21,8 @@ export default function Customers() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("");
+  const [sliderValue, setSliderValue] = useState(10000);
+  const [level, setLevel] = useState("");
 
   const [newCustomer, setNewCustomer] = useState({
     name: "",
@@ -34,6 +36,9 @@ export default function Customers() {
         const params = new URLSearchParams({
           name,
           page: currentPage,
+          pointsFrom: 0,
+          pointsEnd: sliderValue,
+          level,
         }).toString();
 
         const data = await fetchCustomers(params);
@@ -47,7 +52,7 @@ export default function Customers() {
       }
     };
     getCustomers();
-  }, [currentPage, name]);
+  }, [currentPage, name, sliderValue, level]);
 
   const toggleFlyout = () => {
     setIsFlyoutOpen(!isFlyoutOpen);
@@ -113,6 +118,14 @@ export default function Customers() {
     } catch (error) {
       console.error("Error creating customer:", error);
     }
+  };
+
+  const handleSliderChange = (e) => {
+    setSliderValue(e.target.value);
+  };
+
+  const handleTabClick = (level) => {
+    setLevel(level);
   };
 
   const handleNextPage = () => {
@@ -229,16 +242,72 @@ export default function Customers() {
             </button>
 
             {isFlyoutOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg py-2">
+              <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg rounded-lg py-2 z-10">
                 <ul>
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    Option 1
+                  <li className="relative px-4 py-2">
+                    <h3>Points</h3>
+
+                    <input
+                      type="range"
+                      min="0"
+                      max="10000"
+                      step={100}
+                      value={sliderValue}
+                      onChange={handleSliderChange}
+                      className="w-full h-2 bg-gray-300 rounded-lg cursor-pointer mt-2"
+                    />
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-500">0</span>
+                      <span className="block text-md font-semibold">
+                        {sliderValue}
+                      </span>
+                      <span className="text-xs text-gray-500">10000</span>
+                    </div>
                   </li>
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    Option 2
-                  </li>
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                    Option 3
+                  <li className="px-4 py-2">
+                    <h3>Level</h3>
+                    <div className="flex mt-2">
+                      <button
+                        onClick={() => handleTabClick("SL")}
+                        className={`flex-1 py-1 px-2 text-center rounded-lg hover:bg-indigo-50 ${
+                          level === "SL"
+                            ? "text-black bg-indigo-200"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        Silver
+                      </button>
+                      <button
+                        onClick={() => handleTabClick("GD")}
+                        className={`flex-1 py-1 px-2 text-center rounded-lg hover:bg-indigo-50 ${
+                          level === "GD"
+                            ? "text-black bg-indigo-200"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        Gold
+                      </button>
+                      <button
+                        onClick={() => handleTabClick("PL")}
+                        className={`flex-1 py-1 px-2 text-center rounded-lg hover:bg-indigo-50 ${
+                          level === "PL"
+                            ? "text-black bg-indigo-200"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        Platinum
+                      </button>
+                      <button
+                        onClick={() => handleTabClick("DM")}
+                        className={`flex-1 py-1 px-2 text-center rounded-lg hover:bg-indigo-50 ${
+                          level === "DM"
+                            ? "text-black bg-indigo-200"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        Diamond
+                      </button>
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -251,7 +320,7 @@ export default function Customers() {
             <span className="text-md text-gray-500">Customer</span>
             <span className="text-md text-gray-500">Points</span>
             <span className="text-md text-gray-500">Level</span>
-            <span className="text-md text-gray-500">Last Transaction</span>
+            <span className="text-md text-gray-500">Phone</span>
           </div>
 
           {customers.map((customer) => (

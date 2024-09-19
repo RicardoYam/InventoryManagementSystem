@@ -109,7 +109,7 @@ export default function Customer({ customer, setCustomers }) {
             className="w-6"
           />
         </span>
-        <span>{customer.last_transaction}</span>
+        <span>{customer.phone.replace(/^(\+61)/, "0")}</span>
         <div className="flex gap-4">
           <button onClick={handleEditClick}>
             <Edit size={20} />
