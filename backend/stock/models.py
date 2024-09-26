@@ -28,7 +28,7 @@ class Product(models.Model):
     selling_price = models.DecimalField(max_digits=5, decimal_places=2)
     image_name = models.CharField(max_length=50)
     image_url = models.CharField(max_length=255)
-    image_type = models.CharField(max_length=5)
+    image_type = models.CharField(max_length=15)
 
     class Meta:
         db_table = "product"
@@ -64,6 +64,12 @@ class Stock(models.Model):
         verbose_name = "Stock"
         verbose_name_plural = "Stock"
         ordering = ["-create_time"]
+
+    def save(self, *args, **kwargs):
+        if self.quantity == 0:
+            self.delete
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return self.color + " " + self.size + " " + self.quantity

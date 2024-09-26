@@ -2,10 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("stocks/", views.StockListCreateView.as_view(), name="stock-list"),
+    path("inventories/", views.StockListCreateView.as_view(), name="inventory-list"),
     path(
-        "stocks/<int:pk>/",
+        "inventories/<int:pk>/",
         views.StockRetrieveDeleteUpdateView.as_view(),
-        name="stock-update",
+        name="inventory-update",
     ),
 ]

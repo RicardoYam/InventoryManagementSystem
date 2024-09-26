@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Edit, Trash2, X } from "lucide-react";
 
-import BronzeIcon from "../assets/bronze.png";
 import SilverIcon from "../assets/silver.png";
 import GoldIcon from "../assets/gold.png";
 import PlatinumIcon from "../assets/platinum.png";

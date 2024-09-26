@@ -14,12 +14,19 @@ class Order(models.Model):
         CASH = ("CA", _("Cash"))
         CREDIT = ("CR", _("Credit"))
 
+    class Status(models.TextChoices):
+        PAID = ("P", _("Paid"))
+        REFUND = ("R", _("Refund"))
+        UNPAID = ("U", _("Unpaid"))
+
     method = models.CharField(max_length=2, choices=Method)
     total = models.DecimalField(max_digits=6, decimal_places=2)
+    status = models.CharField(max_length=1, choices=Status, default=Status.PAID)
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, null=True, blank=True, related_name="orders"
     )
     create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "order"
@@ -39,6 +46,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, null=True, blank=True, related_name="items"
     )
+    stock_id = models.IntegerField(null=True, blank=True)
     quantity = models.IntegerField()
 
     class Meta:

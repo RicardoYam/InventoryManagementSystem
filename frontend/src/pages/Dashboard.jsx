@@ -1,65 +1,43 @@
 import WeeklySales from "../components/WeeklySales";
 import MonthlySales from "../components/MonthlySales";
 import { Link } from "react-router-dom";
-import Invoice from "../components/Invoice";
-import Product from "../components/Product";
+import Order from "../components/Order";
+import Inventory from "../components/Inventory";
 import { Search, Moon } from "lucide-react";
-
+import { useState, useEffect } from "react";
+import { fetchOrders } from "../api/orders";
+import { fetchInventories } from "../api/inventories";
 export default function Dashboard() {
-  const orders = [
-    {
-      id: 1,
-      customer: "Manni Zhang",
-      date: "31 Aug 2021",
-      amount: 200,
-      status: "Paid",
-    },
-    {
-      id: 2,
-      customer: "John Doe",
-      date: "10 Aug 2021",
-      amount: 300,
-      status: "Refunded",
-    },
-    {
-      id: 3,
-      customer: "Jane Doe",
-      date: "8 Jul 2021",
-      amount: 100,
-      status: "Unpaid",
-    },
-    {
-      id: 4,
-      customer: "Joy Biden",
-      date: "1 Jul 2022",
-      amount: 152,
-      status: "Paid",
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [inventories, setInventories] = useState([]);
+  const [totalInventories, setTotalInventories] = useState(0);
 
-  const products = [
-    {
-      id: 1,
-      name: "Product 1",
-      image: "https://via.placeholder.com/150",
-      quantity: 2,
-      price: 200,
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      image: "https://via.placeholder.com/150",
-      quantity: 3,
-      price: 300,
-    },
-    {
-      id: 3,
-      name: "Product 3",
-      image: "https://via.placeholder.com/150",
-      quantity: 1,
-      price: 100,
-    },
-  ];
+  useEffect(() => {
+    const getOrders = async () => {
+      try {
+        const data = await fetchOrders();
+        setOrders(data.results);
+        setTotalOrders(data.count);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+      }
+    };
+    getOrders();
+  }, []);
+
+  useEffect(() => {
+    const getInventories = async () => {
+      try {
+        const data = await fetchInventories();
+        setInventories(data.results);
+        setTotalInventories(data.count);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+      }
+    };
+    getInventories();
+  }, []);
   return (
     <div>
       <div className="flex justify-between items-center mt-4 font-semibold">
@@ -91,19 +69,21 @@ export default function Dashboard() {
       </div>
 
       <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div className="px-8 py-4 bg-white border border-gray-200 rounded-3xl shadow">
-          <div className="flex justify-between items-center">
+        <div className="px-4 py-4 bg-white border border-gray-200 rounded-3xl shadow">
+          <div className="flex justify-between items-center px-4">
             <span className="text-lg font-semibold">Invoices</span>
             <span className="text-xs text-gray-500 underline p-1">
               <Link to={"orders"}>See All</Link>
             </span>
           </div>
 
-          <div className="flex justify-between">
-            <span className="text-xs text-gray-500">3,251 invoices</span>
+          <div className="flex justify-between px-4">
+            <span className="text-xs text-gray-500">
+              {totalOrders} invoices
+            </span>
           </div>
 
-          <div className="grid grid-cols-5 py-2 text-xs text-gray-500 mt-4">
+          <div className="grid grid-cols-5 py-2 text-xs text-gray-500 mt-4 px-4">
             <span className="text-xs text-gray-500">Customer name</span>
             <span className="text-xs text-gray-500">Date</span>
             <span className="text-xs text-gray-500">Amount</span>
@@ -111,31 +91,38 @@ export default function Dashboard() {
           </div>
 
           {orders.map((order) => (
-            <Invoice key={order.id} order={order} />
+            <Order key={order.id} order={order} />
           ))}
         </div>
 
-        {/* Product */}
-        <div className="px-8 py-4 bg-white border border-gray-200 rounded-3xl shadow">
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold">Products</span>
+        {/* Inventory */}
+        <div className="px-4 py-4 bg-white border border-gray-200 rounded-3xl shadow">
+          <div className="flex justify-between items-center px-4">
+            <span className="text-lg font-semibold">Inventories</span>
             <span className="text-xs text-gray-500 underline p-1">
               <Link to={"orders"}>See All</Link>
             </span>
           </div>
 
-          <div className="flex justify-between">
-            <span className="text-xs text-gray-500">1,591 products</span>
+          <div className="flex justify-between px-4">
+            <span className="text-xs text-gray-500">
+              {totalInventories} inventories
+            </span>
           </div>
 
-          <div className="grid grid-cols-4 py-2 text-xs text-gray-500 mt-4">
-            <span className="text-xs text-gray-500">Product</span>
-            <span className="text-xs text-gray-500">Price</span>
-            <span className="text-xs text-gray-500">Quantity</span>
+          <div className="grid grid-cols-4 px-4 py-2 text-xs text-gray-500 mt-4">
+            <span className="text-xs text-gray-500">Inventory</span>
+            <span className="text-xs text-gray-500">Cost</span>
+            <span className="text-xs text-gray-500">Selling Price</span>
+            <span className="text-xs text-gray-500">Stock</span>
           </div>
 
-          {products.map((product) => (
-            <Product key={product.id} product={product} />
+          {inventories.map((inventory) => (
+            <Inventory
+              key={inventory.id}
+              inventory={inventory}
+              setInventories={setInventories}
+            />
           ))}
         </div>
       </div>
