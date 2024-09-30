@@ -5,6 +5,7 @@ import Customers from "./pages/Customers.jsx";
 import Statisitcs from "./pages/Statistics.jsx";
 import Inventory from "./pages/Inventory.jsx";
 import Orders from "./pages/Orders.jsx";
+import Login from "./pages/Login.jsx";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="inventory" element={<Inventory />} />
           <Route path="orders" element={<Orders />} />
         </Route>
+        <Route path="login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
