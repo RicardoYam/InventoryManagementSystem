@@ -90,7 +90,7 @@ export default function Dashboard() {
             <span className="text-xs text-gray-500">Status</span>
           </div>
 
-          {orders.map((order) => (
+          {orders.slice(0, 6).map((order) => (
             <Order key={order.id} order={order} />
           ))}
         </div>
@@ -117,7 +117,7 @@ export default function Dashboard() {
             <span className="text-xs text-gray-500">Stock</span>
           </div>
 
-          {inventories.map((inventory) => (
+          {inventories.slice(0, 6).map((inventory) => (
             <Inventory
               key={inventory.id}
               inventory={inventory}

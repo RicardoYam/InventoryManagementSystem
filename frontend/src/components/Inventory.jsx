@@ -104,7 +104,6 @@ export default function Inventory({ inventory, setInventories }) {
               {isEditing ? "Edit Inventory" : "Inventory Details"}
             </h2>
 
-            {/* Inventory Image */}
             <div className="relative flex justify-center mb-4">
               <div className="relative w-40 h-40 bg-gray-200 flex items-center justify-center">
                 <img
@@ -268,7 +267,6 @@ export default function Inventory({ inventory, setInventories }) {
               </tbody>
             </table>
 
-            {/* Edit/Delete Buttons */}
             <div className="flex justify-end mt-4 space-x-2">
               {isEditing ? (
                 <button

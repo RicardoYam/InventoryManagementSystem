@@ -102,6 +102,14 @@ export default function Customers() {
       setErrorMessage("At least one of Email or Phone is required.");
       return;
     }
+
+    if (newCustomer.phone) {
+      if (newCustomer.phone.charAt(0) === "0") {
+        newCustomer.phone = newCustomer.phone.slice(1);
+      }
+      newCustomer.phone = "+61" + newCustomer.phone;
+    }
+
     try {
       const createdCustomer = await createCustomer(newCustomer);
       setNewCustomer({
@@ -174,7 +182,7 @@ export default function Customers() {
                     name="name"
                     value={newCustomer.name}
                     onChange={handleInputChange}
-                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
+                    class="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
                   />
                 </label>
                 <label className="block mb-2">
@@ -184,19 +192,25 @@ export default function Customers() {
                     name="email"
                     value={newCustomer.email}
                     onChange={handleInputChange}
-                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
+                    class="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
                   />
                 </label>
                 <label className="block mb-2">
                   Phone:
-                  <input
-                    type="text"
-                    name="phone"
-                    value={newCustomer.phone}
-                    onChange={handleInputChange}
-                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
-                  />
+                  <div class="flex">
+                    <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
+                      +61
+                    </span>
+                    <input
+                      type="text"
+                      name="phone"
+                      value={newCustomer.phone}
+                      onChange={handleInputChange}
+                      class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
+                    ></input>
+                  </div>
                 </label>
+
                 {errorMessage && (
                   <div className="flex mt-4 p-2 gap-2 rounded-lg bg-red-200">
                     <CircleAlert className="text-red-500" />
@@ -228,7 +242,7 @@ export default function Customers() {
               placeholder="Search by customer name"
               value={name}
               onChange={handleNameChange}
-              className="bg-white text-black pl-10 pr-4 py-2 w-full border-none border-transparent focus:border-transparent focus:ring-0"
+              className="bg-white text-black rounded-2xl pl-10 pr-4 py-2 w-full border-none border-transparent focus:border-transparent focus:ring-0"
             />
           </div>
 

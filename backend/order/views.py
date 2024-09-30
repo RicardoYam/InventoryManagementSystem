@@ -16,6 +16,8 @@ class OrderList(generics.ListCreateAPIView):
         discount = request.data.get("discount", None)
         round_value = request.data.get("round", None)
 
+        print(request.data)
+
         total = 0
 
         # check enough stock and process order in stock

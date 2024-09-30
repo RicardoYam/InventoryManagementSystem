@@ -6,7 +6,9 @@ import {
   Search,
   X,
   SlidersHorizontal,
+  ScanLine,
 } from "lucide-react";
+import { Oval } from "react-loader-spinner";
 import Inventory from "../components/Inventory";
 import { fetchInventories, createInventory } from "../api/inventories";
 import { inventoryTypes, sizes } from "../util/util";
@@ -28,9 +30,12 @@ export default function Inventories() {
   const [imageFile, setImageFile] = useState(null);
   const [inventorySearch, setInventorySearch] = useState("");
   const [isFlyOut, setIsFlyOut] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     const getInventories = async () => {
+      setLoading(true);
       try {
         const params = new URLSearchParams({
           name: inventorySearch,
@@ -40,8 +45,12 @@ export default function Inventories() {
         const data = await fetchInventories(params);
         setInventories(data.results);
         setTotalInventories(data.count);
+        setNextPage(data.next);
+        setPrevPage(data.previous);
       } catch (err) {
         console.error("Error fetching inventories:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -76,7 +85,7 @@ export default function Inventories() {
 
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
-
+    setCreating(true);
     const formData = new FormData();
 
     formData.append("name", newInventory.name);
@@ -85,9 +94,9 @@ export default function Inventories() {
     formData.append("type", newInventory.type);
 
     newInventory.stocks.forEach((stock, index) => {
-      formData.append(`stocks[${index}][color]`, stock.color);
-      formData.append(`stocks[${index}][size]`, stock.size);
-      formData.append(`stocks[${index}][quantity]`, stock.quantity);
+      formData.append(`stocks[${index}]color`, stock.color);
+      formData.append(`stocks[${index}]size`, stock.size);
+      formData.append(`stocks[${index}]quantity`, stock.quantity);
     });
 
     if (imageFile) {
@@ -108,6 +117,9 @@ export default function Inventories() {
       setImageFile(null);
     } catch (err) {
       console.error("Error creating inventory:", err);
+    } finally {
+      setCreating(false);
+      setIsCreateModalOpen(false);
     }
   };
 
@@ -133,13 +145,21 @@ export default function Inventories() {
     <div className="flex flex-col pt-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-semibold">Inventories</h1>
-        <button
-          className="flex text-white bg-blue-500 text-md rounded-3xl p-2 gap-1 items-center justify-center"
-          onClick={toggleCreateModal}
-        >
-          <Plus size={17} />
-          Create
-        </button>
+
+        <div className="flex gap-1">
+          <button
+            className="flex text-white mr-2 bg-blue-500 text-md rounded-3xl p-2 gap-1 items-center justify-center"
+            onClick={toggleCreateModal}
+          >
+            <Plus size={17} />
+            Create
+          </button>
+
+          {/* TODO:Scan */}
+          <button className="flex text-white bg-blue-500 text-md rounded-md p-2 gap-1 items-center justify-center">
+            <ScanLine size={20} />
+          </button>
+        </div>
       </div>
 
       <span className="text-xs text-gray-500 mt-2">
@@ -155,7 +175,7 @@ export default function Inventories() {
               placeholder="Search by customer name"
               value={inventorySearch}
               onChange={handleInventorySearchChange}
-              className="bg-white text-black pl-10 pr-4 py-2 w-full border-none border-transparent focus:border-transparent focus:ring-0"
+              className="bg-white text-black rounded-2xl pl-10 pr-4 py-2 w-full border-none border-transparent focus:border-transparent focus:ring-0"
             />
           </div>
 
@@ -168,22 +188,40 @@ export default function Inventories() {
           </button>
         </div>
 
-        <div className="grid grid-cols-4 p-4 text-xs text-gray-500 border-b justify-center items-center">
-          <span className="text-md text-gray-500">Inventory</span>
-          <span className="text-md text-gray-500">Cost</span>
-          <span className="text-md text-gray-500">Selling</span>
-          <span className="text-md text-gray-500">Stocks</span>
-        </div>
-
-        <div>
-          {inventories.map((inventory) => (
-            <Inventory
-              key={inventory.id}
-              inventory={inventory}
-              setInventories={setInventories}
+        {loading ? (
+          <div className="flex flex-col justify-center items-center py-6">
+            <Oval
+              height={80}
+              width={80}
+              color="#4891ff"
+              visible={true}
+              ariaLabel="oval-loading"
+              secondaryColor="#4891ff"
+              strokeWidth={2}
+              strokeWidthSecondary={2}
             />
-          ))}
-        </div>
+            <p className="ml-4">Loading...</p>
+          </div>
+        ) : (
+          <div>
+            <div className="grid grid-cols-4 p-4 text-xs text-gray-500 border-b justify-center items-center">
+              <span className="text-md text-gray-500">Inventory</span>
+              <span className="text-md text-gray-500">Cost</span>
+              <span className="text-md text-gray-500">Selling</span>
+              <span className="text-md text-gray-500">Stocks</span>
+            </div>
+
+            <div>
+              {inventories.map((inventory) => (
+                <Inventory
+                  key={inventory.id}
+                  inventory={inventory}
+                  setInventories={setInventories}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-between items-center px-4 py-2">
           <div className="text-gray-500">{`Page: ${currentPage}`}</div>
@@ -207,7 +245,6 @@ export default function Inventories() {
         </div>
       </div>
 
-      {/* Create Inventory Modal */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg relative">
@@ -338,14 +375,30 @@ export default function Inventories() {
                 More
               </button>
 
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
-                >
-                  Create
-                </button>
-              </div>
+              {creating ? (
+                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-50">
+                  <Oval
+                    height={50}
+                    width={50}
+                    color="#4891ff"
+                    visible={true}
+                    ariaLabel="oval-creating"
+                    secondaryColor="#4891ff"
+                    strokeWidth={2}
+                    strokeWidthSecondary={2}
+                  />
+                  <p className="ml-4">Creating...</p>
+                </div>
+              ) : (
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+                  >
+                    Create
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>
