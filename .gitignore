@@ -1,3 +1,5 @@
 **/db.sqlite3
 **/venv
-**/credentials
+**/.env
+**/node_modules
+**/package-lock.json

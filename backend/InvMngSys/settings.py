@@ -154,3 +154,15 @@ SIMPLE_JWT = {
     "VERIFYING_KEY": None,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+import environ
+import os
+
+env = environ.Env()
+
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_S3_REGION = env("AWS_S3_REGION")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")

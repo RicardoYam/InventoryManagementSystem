@@ -12,9 +12,13 @@ import boto3
 import uuid
 import mimetypes
 import json
+import os
 
-AWS_S3_REGION = "us-east-1"
-AWS_STORAGE_BUCKET_NAME = "ivm-test-ricardo"
+
+AWS_S3_REGION = os.getenv("AWS_S3_REGION")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 
 class StockListCreateView(generics.ListCreateAPIView):
@@ -59,7 +63,12 @@ class StockListCreateView(generics.ListCreateAPIView):
             )
             image_type = mimetypes.guess_type(image_file.name)[0]
 
-            s3 = boto3.client("s3")
+            s3 = boto3.client(
+                "s3",
+                region_name=AWS_S3_REGION,
+                aws_access_key_id=AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            )
 
             try:
                 s3.upload_fileobj(
@@ -112,7 +121,12 @@ class StockRetrieveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
             )
             image_type = mimetypes.guess_type(image_file.name)[0]
 
-            s3 = boto3.client("s3")
+            s3 = boto3.client(
+                "s3",
+                region_name=AWS_S3_REGION,
+                aws_access_key_id=AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+            )
             try:
                 s3.upload_fileobj(
                     image_file,
@@ -157,6 +171,7 @@ class StockReportAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self, start_date, end_date):
+        end_date = end_date + timedelta(days=1)
         return Product.objects.filter(
             stocks__create_time__gte=start_date, stocks__create_time__lte=end_date
         ).distinct()
