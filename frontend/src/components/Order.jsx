@@ -5,9 +5,13 @@ import {
   DateConverter,
   DateConverterWithBrisbaneTime,
 } from "../util/util";
+import { deleteOrder } from "../api/orders";
+import clsx from "clsx";
 
-function Order({ order }) {
+function Order({ order, setOrders, className }) {
   const [isFlyoutOpen, setIsFlyoutOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState(null);
 
   const getStatusClasses = (status) => {
     switch (status) {
@@ -31,27 +35,52 @@ function Order({ order }) {
     setIsFlyoutOpen(!isFlyoutOpen);
   };
 
+  const confirmDeleteOrder = (orderId) => {
+    setOrderToDelete(orderId);
+    setIsConfirmOpen(true);
+  };
+
+  const handleDeleteOrder = async () => {
+    try {
+      await deleteOrder(orderToDelete);
+      setOrders((prevOrders) =>
+        prevOrders.filter((order) => order.id !== orderToDelete)
+      );
+      setIsConfirmOpen(false);
+    } catch (err) {
+      console.error("Error deleting order:", err);
+    }
+  };
+
   return (
     <div>
       {/* Order Row */}
-      <div className="grid grid-cols-5 p-4 text-xs justify-center items-center sm:text-sm border-b">
-        <span onClick={toggleFlyout} className="cursor-pointer">
-          {order.customer_name}
-        </span>
-        <span>{DateConverter(order.create_time)}</span>
-        <span>${order.total}</span>
+      <div
+        onClick={toggleFlyout}
+        className={clsx(
+          "grid grid-cols-10 px-4 py-2 text-xs justify-center items-center cursor-pointer lg:text-sm lg:py-4 border-b",
+          className
+        )}
+      >
+        <span className="col-span-2">{order.customer_name}</span>
+        <span className="col-span-2">{DateConverter(order.create_time)}</span>
+        <span className="col-span-2">${order.total}</span>
         <span
-          className={`flex justify-center items-center rounded-full ${getStatusClasses(
+          className={`flex col-span-3 justify-center items-center rounded-full ${getStatusClasses(
             order.status
           )}`}
         >
           {getStatusLabel(order.status)}
         </span>
-        <button>
+        <button
+          className="flex justify-center items-center"
+          onClick={() => confirmDeleteOrder(order.id)}
+        >
           <Trash2 size={20} />
         </button>
       </div>
 
+      {/* Flyout for Order Details */}
       {isFlyoutOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div className="bg-white w-full max-w-lg p-6 shadow-lg rounded-lg relative">
@@ -113,6 +142,32 @@ function Order({ order }) {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {isConfirmOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white w-full max-w-md p-6 shadow-lg rounded-lg relative">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold">Delete Order</h2>
+              <p>Are you sure you want to delete this order?</p>
+            </div>
+            <div className="flex justify-end gap-4">
+              <button
+                className="px-4 py-2 bg-gray-300 text-black rounded-lg"
+                onClick={() => setIsConfirmOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                onClick={handleDeleteOrder}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Edit, Trash2, X, ArrowLeft, Pencil } from "lucide-react";
 import { updateInventory, deleteInventory } from "../api/inventories";
 import { sizes } from "../util/util";
+import clsx from "clsx";
 
-export default function Inventory({ inventory, setInventories }) {
+export default function Inventory({ inventory, setInventories, className }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [inventoryDetails, setInventoryDetails] = useState(inventory);
@@ -72,7 +73,10 @@ export default function Inventory({ inventory, setInventories }) {
     <>
       <div
         onClick={handleIsModelOpen}
-        className="grid grid-cols-4 p-4 cursor-pointer border-b"
+        className={clsx(
+          "grid grid-cols-4 px-4 py-2 text-xs justify-center items-center lg:text-sm lg:py-4 border-b",
+          className
+        )}
       >
         <span>{inventory.name}</span>
         <span>${inventory.purchased_price}</span>
@@ -100,11 +104,25 @@ export default function Inventory({ inventory, setInventories }) {
               </button>
             </div>
 
-            <h2 className="text-2xl font-semibold mb-4">
-              {isEditing ? "Edit Inventory" : "Inventory Details"}
-            </h2>
+            <div className="mb-4">
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={inventoryDetails.name}
+                  onChange={(e) =>
+                    setInventoryDetails({
+                      ...inventoryDetails,
+                      name: e.target.value,
+                    })
+                  }
+                  className="border rounded-lg w-full p-2"
+                />
+              ) : (
+                <h2 className="font-bold text-2xl">{inventoryDetails.name}</h2>
+              )}
+            </div>
 
-            <div className="relative flex justify-center mb-4">
+            <div className="relative flex justify-center mb-8">
               <div className="relative w-40 h-40 bg-gray-200 flex items-center justify-center">
                 <img
                   src={
@@ -136,25 +154,7 @@ export default function Inventory({ inventory, setInventories }) {
             {/* Inventory Details */}
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div>
-                <label className="block font-semibold">Name:</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={inventoryDetails.name}
-                    onChange={(e) =>
-                      setInventoryDetails({
-                        ...inventoryDetails,
-                        name: e.target.value,
-                      })
-                    }
-                    className="border rounded-lg w-full p-2"
-                  />
-                ) : (
-                  <p>{inventoryDetails.name}</p>
-                )}
-              </div>
-              <div>
-                <label className="block font-semibold">Cost Price:</label>
+                <label className="block font-semibold">Cost Price</label>
                 {isEditing ? (
                   <input
                     type="number"
@@ -168,11 +168,11 @@ export default function Inventory({ inventory, setInventories }) {
                     className="border rounded-lg w-full p-2"
                   />
                 ) : (
-                  <p>{inventoryDetails.purchased_price}</p>
+                  <p>${inventoryDetails.purchased_price}</p>
                 )}
               </div>
               <div>
-                <label className="block font-semibold">Selling Price:</label>
+                <label className="block font-semibold">Selling Price</label>
                 {isEditing ? (
                   <input
                     type="number"
@@ -186,11 +186,11 @@ export default function Inventory({ inventory, setInventories }) {
                     className="border rounded-lg w-full p-2"
                   />
                 ) : (
-                  <p>{inventoryDetails.selling_price}</p>
+                  <p>${inventoryDetails.selling_price}</p>
                 )}
               </div>
               <div>
-                <label className="block font-semibold">Total Stocks:</label>
+                <label className="block font-semibold">Total Stocks</label>
                 <p>
                   {inventoryDetails.stocks.reduce(
                     (total, stock) => total + parseInt(stock.quantity, 10),
@@ -204,16 +204,20 @@ export default function Inventory({ inventory, setInventories }) {
             <h3 className="font-semibold mb-2">Stock Details</h3>
             <table className="w-full border">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Color</th>
-                  <th className="text-left p-2">Size</th>
-                  <th className="text-left p-2">Quantity</th>
+                <tr className="bg-gray-200">
+                  <th className="border text-left border-gray-300 p-2">
+                    Color
+                  </th>
+                  <th className="border text-left border-gray-300 p-2">Size</th>
+                  <th className="border text-left border-gray-300 p-2">
+                    Quantity
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {inventoryDetails.stocks.map((stock, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="p-2">
+                  <tr key={index}>
+                    <td className="border border-gray-300 p-2">
                       {isEditing ? (
                         <input
                           type="text"
@@ -227,7 +231,7 @@ export default function Inventory({ inventory, setInventories }) {
                         stock.color
                       )}
                     </td>
-                    <td className="p-2">
+                    <td className="border border-gray-300 p-2">
                       {isEditing ? (
                         <div>
                           <select
@@ -248,7 +252,7 @@ export default function Inventory({ inventory, setInventories }) {
                         stock.size
                       )}
                     </td>
-                    <td className="p-2">
+                    <td className="border border-gray-300 p-2">
                       {isEditing ? (
                         <input
                           type="number"

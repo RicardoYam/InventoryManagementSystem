@@ -176,7 +176,7 @@ export default function Customers() {
               <h2 className="text-2xl font-semibold mb-4">Add Customer</h2>
               <form onSubmit={handleSubmit}>
                 <label className="block mb-2">
-                  Name:
+                  Name
                   <input
                     type="text"
                     name="name"
@@ -186,7 +186,7 @@ export default function Customers() {
                   />
                 </label>
                 <label className="block mb-2">
-                  Email:
+                  Email
                   <input
                     type="email"
                     name="email"
@@ -196,7 +196,7 @@ export default function Customers() {
                   />
                 </label>
                 <label className="block mb-2">
-                  Phone:
+                  Phone
                   <div class="flex">
                     <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
                       +61
@@ -217,12 +217,14 @@ export default function Customers() {
                     <span className="text-red-500">{errorMessage}</span>
                   </div>
                 )}
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white py-2 px-4 mt-4 rounded-lg hover:bg-blue-600"
-                >
-                  Submit
-                </button>
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white py-2 px-4 mt-4 rounded-lg hover:bg-blue-600"
+                  >
+                    Submit
+                  </button>
+                </div>
               </form>
             </div>
           </div>

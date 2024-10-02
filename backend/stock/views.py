@@ -3,6 +3,11 @@ from stock.serializers import ProductSerializer
 from stock.models import Stock, Product
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Sum, F
+from django.utils.timezone import now
+from rest_framework.response import Response
+from datetime import timedelta
 import boto3
 import uuid
 import mimetypes
@@ -15,6 +20,7 @@ AWS_STORAGE_BUCKET_NAME = "ivm-test-ricardo"
 class StockListCreateView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -88,6 +94,7 @@ class StockListCreateView(generics.ListCreateAPIView):
 class StockRetrieveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
         # Get the current product object before update
@@ -143,3 +150,44 @@ class StockRetrieveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
         self.perform_update(serializer)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StockReportAPIView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self, start_date, end_date):
+        return Product.objects.filter(
+            stocks__create_time__gte=start_date, stocks__create_time__lte=end_date
+        ).distinct()
+
+    def list(self, request, *args, **kwargs):
+        current_date = now().date()
+        start_of_year = current_date.replace(month=1, day=1)
+
+        filtered_products = self.get_queryset(start_of_year, current_date)
+
+        total_cost_price = (
+            Stock.objects.filter(product__in=filtered_products).aggregate(
+                total_cost=Sum(F("product__purchased_price") * F("quantity"))
+            )["total_cost"]
+            or 0
+        )
+
+        total_stocks = (
+            Stock.objects.filter(product__in=filtered_products).aggregate(
+                total_stocks=Sum("quantity")
+            )["total_stocks"]
+            or 0
+        )
+
+        response_data = {
+            "total_cost_price": {
+                "total_cost": total_cost_price,
+            },
+            "total_stocks_number": {
+                "total_stocks": total_stocks,
+            },
+        }
+
+        return Response(response_data)

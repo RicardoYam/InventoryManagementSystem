@@ -211,12 +211,13 @@ export default function Inventories() {
               <span className="text-md text-gray-500">Stocks</span>
             </div>
 
-            <div>
-              {inventories.map((inventory) => (
+            <div className="cursor-pointer">
+              {inventories.map((inventory, index) => (
                 <Inventory
                   key={inventory.id}
                   inventory={inventory}
                   setInventories={setInventories}
+                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
                 />
               ))}
             </div>
@@ -247,7 +248,10 @@ export default function Inventories() {
 
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg relative">
+          <div
+            className="bg-white p-6 shadow-lg rounded-lg relative overflow-auto"
+            style={{ maxHeight: "85vh", maxWidth: "70vh" }}
+          >
             <span
               className="absolute top-2 right-4 text-black text-xl cursor-pointer"
               onClick={toggleCreateModal}
@@ -258,7 +262,7 @@ export default function Inventories() {
 
             <form onSubmit={handleCreateSubmit}>
               <div className="mb-4">
-                <label className="block mb-2">Image:</label>
+                <label className="block mb-2">Image</label>
                 <input
                   type="file"
                   name="imageFile"
@@ -268,7 +272,7 @@ export default function Inventories() {
               </div>
 
               <div className="mb-4">
-                <label className="block mb-2">Name:</label>
+                <label className="block mb-2">Name</label>
                 <input
                   type="text"
                   name="name"
@@ -281,7 +285,7 @@ export default function Inventories() {
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block mb-2">Cost Price:</label>
+                  <label className="block mb-2">Cost Price</label>
                   <input
                     type="number"
                     name="purchased_price"
@@ -292,7 +296,7 @@ export default function Inventories() {
                   />
                 </div>
                 <div>
-                  <label className="block mb-2">Selling Price:</label>
+                  <label className="block mb-2">Selling Price</label>
                   <input
                     type="number"
                     name="selling_price"
@@ -304,8 +308,8 @@ export default function Inventories() {
                 </div>
               </div>
 
-              <div className="mb-4">
-                <label className="block mb-2">Type:</label>
+              <div className="mb-8">
+                <label className="block mb-2">Type</label>
                 <select
                   name="type"
                   value={newInventory.type}
@@ -323,10 +327,14 @@ export default function Inventories() {
               </div>
 
               <h3 className="font-semibold mb-2">Stock Details</h3>
+              <div className="grid grid-cols-3 gap-4">
+                <label className="block mb-2">Size</label>
+                <label className="block mb-2">Color</label>
+                <label className="block mb-2">Quantity</label>
+              </div>
               {newInventory.stocks.map((stock, index) => (
                 <div key={index} className="grid grid-cols-3 gap-4 mb-2">
                   <div>
-                    <label className="block mb-2">Size:</label>
                     <select
                       name="size"
                       value={stock.size}
@@ -343,7 +351,6 @@ export default function Inventories() {
                     </select>
                   </div>
                   <div>
-                    <label className="block mb-2">Color:</label>
                     <input
                       type="text"
                       name="color"
@@ -354,7 +361,6 @@ export default function Inventories() {
                     />
                   </div>
                   <div>
-                    <label className="block mb-2">Quantity:</label>
                     <input
                       type="number"
                       name="quantity"

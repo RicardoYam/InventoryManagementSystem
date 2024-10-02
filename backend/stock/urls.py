@@ -8,4 +8,9 @@ urlpatterns = [
         views.StockRetrieveDeleteUpdateView.as_view(),
         name="inventory-update",
     ),
+    path(
+        "inventories/report/",
+        views.StockReportAPIView.as_view(),
+        name="inventory-report",
+    ),
 ]

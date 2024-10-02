@@ -6,12 +6,20 @@ import Statisitcs from "./pages/Statistics.jsx";
 import Inventory from "./pages/Inventory.jsx";
 import Orders from "./pages/Orders.jsx";
 import Login from "./pages/Login.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="customers" element={<Customers />} />
           <Route path="statistics" element={<Statisitcs />} />

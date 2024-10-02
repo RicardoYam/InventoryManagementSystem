@@ -53,10 +53,10 @@ export function DateConverter(timestamp) {
   );
 
   const day = brisbaneDate.getUTCDate();
-  const month = months[brisbaneDate.getUTCMonth()];
+  const month = brisbaneDate.getUTCMonth();
   const year = brisbaneDate.getUTCFullYear();
 
-  return `${day} ${month} ${year}`;
+  return `${day}/${month}/${year}`;
 }
 
 export function DateConverterWithBrisbaneTime(timestamp) {
@@ -83,11 +83,11 @@ export function DateConverterWithBrisbaneTime(timestamp) {
   );
 
   const day = brisbaneDate.getUTCDate();
-  const month = months[brisbaneDate.getUTCMonth()];
+  const month = brisbaneDate.getUTCMonth();
   const year = brisbaneDate.getUTCFullYear();
 
   const hours = String(brisbaneDate.getUTCHours()).padStart(2, "0");
   const minutes = String(brisbaneDate.getUTCMinutes()).padStart(2, "0");
 
-  return `${hours}:${minutes} ${day} ${month} ${year}`;
+  return `${hours}:${minutes} ${day}/${month}/${year}`;
 }

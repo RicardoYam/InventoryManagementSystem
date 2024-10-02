@@ -19,7 +19,6 @@ export default function Customer({ customer, setCustomers }) {
     name: "",
     email: "",
     phone: "",
-    points: "",
   });
 
   const getLevelIcon = (level) => {
@@ -46,7 +45,6 @@ export default function Customer({ customer, setCustomers }) {
         name: data.name,
         email: data.email || "",
         phone: data.phone || "",
-        points: data.points,
       });
     } catch (error) {
       console.error("Error fetching customer details:", error);
@@ -138,7 +136,7 @@ export default function Customer({ customer, setCustomers }) {
             {customerDetails ? (
               <form>
                 <label className="block mb-2">
-                  Name:
+                  Name
                   <input
                     type="text"
                     name="name"
@@ -148,7 +146,7 @@ export default function Customer({ customer, setCustomers }) {
                   />
                 </label>
                 <label className="block mb-2">
-                  Email:
+                  Email
                   <input
                     type="email"
                     name="email"
@@ -158,7 +156,7 @@ export default function Customer({ customer, setCustomers }) {
                   />
                 </label>
                 <label className="block mb-2">
-                  Phone:
+                  Phone
                   <input
                     type="text"
                     name="phone"
@@ -167,23 +165,15 @@ export default function Customer({ customer, setCustomers }) {
                     className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
                   />
                 </label>
-                <label className="block mb-2">
-                  Points:
-                  <input
-                    type="number"
-                    name="points"
-                    value={formData.points}
-                    onChange={handleInputChange}
-                    className="block w-full border border-gray-300 rounded-lg py-2 px-3 mt-1"
-                  />
-                </label>
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white py-2 px-4 mt-4 rounded-lg hover:bg-blue-600"
-                  onClick={handleUpdateClick}
-                >
-                  Update
-                </button>
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white py-2 px-4 mt-4 rounded-lg hover:bg-blue-600"
+                    onClick={handleUpdateClick}
+                  >
+                    Update
+                  </button>
+                </div>
               </form>
             ) : (
               <p>Loading customer details...</p>

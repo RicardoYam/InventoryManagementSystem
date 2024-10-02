@@ -25,14 +25,16 @@ import { CheckIcon } from "@heroicons/react/20/solid";
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [totalOrders, setTotalOrders] = useState(0);
   const [nextPage, setNextPage] = useState(null);
   const [prevPage, setPrevPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [name, setName] = useState("");
+  const [customerName, setCustomerName] = useState("");
   const [newOrder, setNewOrder] = useState({
     customer: null,
     method: null,
@@ -41,6 +43,9 @@ export default function Orders() {
     items: [{ product: null, size: null, color: null, quantity: 1 }],
   });
   const [query, setQuery] = useState("");
+  const [productQuery, setProductQuery] = useState("");
+  const [sizeQuery, setSizeQuery] = useState("");
+  const [colorQuery, setColorQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [creatingOrder, setCreatingOrder] = useState(false);
 
@@ -49,7 +54,7 @@ export default function Orders() {
       setLoading(true);
       try {
         const params = new URLSearchParams({
-          name,
+          customerName,
           page: currentPage,
         }).toString();
         const data = await fetchOrders(params);
@@ -64,7 +69,7 @@ export default function Orders() {
       }
     };
     getOrders();
-  }, [currentPage, name]);
+  }, [currentPage, customerName]);
 
   useEffect(() => {
     if (isFormOpen) {
@@ -79,6 +84,12 @@ export default function Orders() {
           setProducts(
             Array.isArray(productData.results) ? productData.results : []
           );
+          setFilteredCustomers(
+            Array.isArray(customerData.results) ? customerData.results : []
+          );
+          setFilteredProducts(
+            Array.isArray(productData.results) ? productData.results : []
+          );
         } catch (err) {
           console.error("Error fetching customers or products:", err);
         } finally {
@@ -88,6 +99,31 @@ export default function Orders() {
       getCustomersAndProducts();
     }
   }, [isFormOpen]);
+
+  useEffect(() => {
+    if (query === "") {
+      setFilteredCustomers(customers);
+    } else {
+      setFilteredCustomers(
+        customers.filter((customer) =>
+          customer.name.toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    }
+  }, [query, customers]);
+
+  // Query for product filtering
+  useEffect(() => {
+    if (productQuery) {
+      setFilteredProducts(
+        products.filter((product) =>
+          product.name.toLowerCase().includes(productQuery.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [productQuery, products]);
 
   const toggleFormOpen = () => {
     setIsFormOpen(!isFormOpen);
@@ -118,7 +154,6 @@ export default function Orders() {
   };
 
   const calculateTotalPrice = () => {
-    console.log(newOrder.items);
     let total = newOrder.items.reduce((sum, item) => {
       const price = item.product?.selling_price || 0;
       return sum + price * item.quantity;
@@ -168,13 +203,10 @@ export default function Orders() {
         .filter((item) => item !== null),
     };
 
-    console.log(formattedOrder);
-
     setCreatingOrder(true);
 
     try {
       const createdOrder = await createOrder(formattedOrder);
-      console.log(createdOrder);
 
       setNewOrder({
         customer: null,
@@ -250,7 +282,7 @@ export default function Orders() {
               <h2 className="text-2xl font-semibold mb-4">Create New Order</h2>
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <label className="block mb-2">Customer:</label>
+                  <label className="block mb-2">Customer</label>
                   <Combobox
                     value={newOrder.customer}
                     onChange={(selectedCustomer) =>
@@ -268,7 +300,7 @@ export default function Orders() {
                       onChange={(event) => setQuery(event.target.value)}
                       className={clsx(
                         "max-w-40 rounded-lg text-black",
-                        "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+                        "focus:outline-none"
                       )}
                     />
                     <ComboboxOptions
@@ -278,7 +310,7 @@ export default function Orders() {
                         "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50"
                       )}
                     >
-                      {customers.map((person) => (
+                      {filteredCustomers.map((person) => (
                         <ComboboxOption key={person.id} value={person}>
                           {({ active, selected }) => (
                             <div
@@ -336,12 +368,14 @@ export default function Orders() {
                           <ComboboxInput
                             aria-label="Product"
                             displayValue={(product) => product?.name}
-                            onClick={() => setQuery("")}
-                            onFocus={() => setQuery("")}
-                            onChange={(event) => setQuery(event.target.value)}
+                            onClick={() => setProductQuery("")}
+                            onFocus={() => setProductQuery("")}
+                            onChange={(event) =>
+                              setProductQuery(event.target.value)
+                            }
                             className={clsx(
                               "w-full rounded-lg text-black",
-                              "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+                              "focus:outline-none"
                             )}
                           />
                           <ComboboxOptions
@@ -351,7 +385,7 @@ export default function Orders() {
                               "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50"
                             )}
                           >
-                            {products.map((product) => (
+                            {filteredProducts.map((product) => (
                               <ComboboxOption key={product.id} value={product}>
                                 {({ active, selected }) => (
                                   <div
@@ -384,11 +418,12 @@ export default function Orders() {
                           <ComboboxInput
                             aria-label="Size"
                             displayValue={(size) => size}
-                            onClick={() => setQuery("")}
-                            onFocus={() => setQuery("")}
+                            onClick={() => setSizeQuery("")}
+                            onFocus={() => setSizeQuery("")}
+                            onChange={(e) => setSizeQuery(e.target.value)}
                             className={clsx(
                               "w-full rounded-lg text-black",
-                              "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+                              "focus:outline-none"
                             )}
                           />
                           <ComboboxOptions
@@ -431,11 +466,12 @@ export default function Orders() {
                           <ComboboxInput
                             aria-label="Color"
                             displayValue={(color) => color}
-                            onClick={() => setQuery("")}
-                            onFocus={() => setQuery("")}
+                            onClick={() => setColorQuery("")}
+                            onFocus={() => setColorQuery("")}
+                            onChange={(e) => setColorQuery(e.target.value)}
                             className={clsx(
                               "w-full rounded-lg text-black",
-                              "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25"
+                              "focus:outline-none"
                             )}
                           />
                           <ComboboxOptions
@@ -494,120 +530,6 @@ export default function Orders() {
                   >
                     + Add Product
                   </button>
-                </div>
-
-                <div className="mb-4">
-                  <span>Payment:</span>
-                  <div className="grid grid-cols-3 gap-1 mt-2">
-                    <div className="border flex items-center p-2">
-                      <input
-                        id="wechat"
-                        type="radio"
-                        value="wechat"
-                        name="payment"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={() =>
-                          setNewOrder((prev) => ({ ...prev, method: "WE" }))
-                        }
-                      />
-                      <label
-                        htmlFor="wechat"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
-                      >
-                        <FaWeixin className="mr-2 w-4" /> WeChat
-                      </label>
-                    </div>
-                    <div className="border flex items-center p-2">
-                      <input
-                        id="alipay"
-                        type="radio"
-                        value="alipay"
-                        name="payment"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={() =>
-                          setNewOrder((prev) => ({ ...prev, method: "AL" }))
-                        }
-                      />
-                      <label
-                        htmlFor="alipay"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
-                      >
-                        <FaAlipay className="mr-2 w-4" /> AliPay
-                      </label>
-                    </div>
-                    <div className="border flex items-center p-2">
-                      <input
-                        id="transfer"
-                        type="radio"
-                        value="transfer"
-                        name="payment"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={() =>
-                          setNewOrder((prev) => ({ ...prev, method: "TR" }))
-                        }
-                      />
-                      <label
-                        htmlFor="transfer"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
-                      >
-                        <FaExchangeAlt className="mr-2 w-4" /> Transfer
-                      </label>
-                    </div>
-                    <div className="border flex items-center p-2">
-                      <input
-                        id="cash"
-                        type="radio"
-                        value="cash"
-                        name="payment"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={() =>
-                          setNewOrder((prev) => ({ ...prev, method: "CA" }))
-                        }
-                      />
-                      <label
-                        htmlFor="cash"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
-                      >
-                        <FaMoneyBill className="mr-2 w-4" /> Cash
-                      </label>
-                    </div>
-                    <div className="border flex items-center p-2">
-                      <input
-                        id="creditcard"
-                        type="radio"
-                        value="creditcard"
-                        name="payment"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={() =>
-                          setNewOrder((prev) => ({ ...prev, method: "CC" }))
-                        }
-                      />
-                      <label
-                        htmlFor="creditcard"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
-                      >
-                        <FaCreditCard className="mr-2 w-4" /> Card
-                      </label>
-                    </div>
-                    <div className="border flex items-center p-2">
-                      <input
-                        id="credit"
-                        type="radio"
-                        value="credit"
-                        name="payment"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        onChange={() =>
-                          setNewOrder((prev) => ({ ...prev, method: "CR" }))
-                        }
-                      />
-                      <label
-                        htmlFor="credit"
-                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
-                      >
-                        <FaCoins className="mr-2 w-4" /> Credit
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="flex flex-col mb-4">
@@ -697,8 +619,8 @@ export default function Orders() {
             <input
               type="text"
               placeholder="Search by order name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={customerName}
+              onChange={(e) => setCustomerName(e.target.value)}
               className="bg-white text-black rounded-2xl pl-10 pr-4 py-2 w-full border-none border-transparent focus:border-transparent focus:ring-0"
             />
           </div>
@@ -727,8 +649,13 @@ export default function Orders() {
               <span className="text-md text-gray-500">Status</span>
             </div>
 
-            {orders.map((order) => (
-              <Order key={order.id} order={order} />
+            {orders.map((order, index) => (
+              <Order
+                key={order.id}
+                order={order}
+                setOrders={setOrders}
+                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+              />
             ))}
           </div>
         )}
