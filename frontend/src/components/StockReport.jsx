@@ -50,7 +50,7 @@ export default function StockReport() {
   }
   return (
     <div className="grid grid-cols-2 grid-rows-2 w-full min-h-56 max-h-72 bg-white gap-4">
-      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4">
+      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4 transform transition-transform duration-300 hover:scale-105">
         <div className="flex gap-2 items-center">
           <Banknote color="#5843f5" />
           <h4 className="text-sm">Total Sales</h4>
@@ -80,7 +80,7 @@ export default function StockReport() {
         )}
       </div>
 
-      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4">
+      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4 transform transition-transform duration-300 hover:scale-105">
         <div className="flex gap-2 items-center">
           <ScrollText color="#5843f5" />
           <h4 className="text-sm">Total Orders</h4>
@@ -110,7 +110,7 @@ export default function StockReport() {
         )}
       </div>
 
-      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4">
+      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4 transform transition-transform duration-300 hover:scale-105">
         <div className="flex gap-2 items-center">
           <Coins color="#5843f5" />
           <h4 className="text-sm">Total Costs</h4>
@@ -120,7 +120,7 @@ export default function StockReport() {
         </h5>
       </div>
 
-      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4">
+      <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4 transform transition-transform duration-300 hover:scale-105">
         <div className="flex gap-2 items-center">
           <Package color="#5843f5" />
           <h4 className="text-sm">Total Stocks</h4>

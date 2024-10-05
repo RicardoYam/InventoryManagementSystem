@@ -123,7 +123,7 @@ export default function SalesReport() {
   }, [chartOptions]);
 
   return (
-    <div className="w-full min-h-56 max-h-72 bg-white rounded-3xl shadow border border-gray-200">
+    <div className="w-full min-h-56 max-h-72 bg-white rounded-3xl shadow border border-gray-200 transform transition-transform duration-300 hover:scale-105">
       <div className="flex justify-between p-4 md:p-6 pb-0">
         <div>
           <h5 className="leading-none text-3xl font-bold text-gray-900">

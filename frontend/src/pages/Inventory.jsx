@@ -192,13 +192,14 @@ export default function Inventories() {
             />
           </div>
 
-          <button
+          {/* TODO: Filter */}
+          {/* <button
             className="flex p-2 m-2 rounded-2xl border border-gray-200 gap-2 items-center justify-center"
             onClick={toggleFlyout}
           >
             <SlidersHorizontal size={20} />
             Display
-          </button>
+          </button> */}
         </div>
 
         <div>
