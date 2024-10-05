@@ -89,26 +89,37 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
 
+from django.utils.timezone import now
+from datetime import timedelta, date
+from django.db.models import Sum
+from django.db.models.functions import TruncDay
+from rest_framework.response import Response
+from rest_framework import generics
+from .models import Order
+from .serializers import OrderSerializer
+from rest_framework.permissions import IsAuthenticated
+
+
 class SalesReportAPIView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self, start_date, end_date):
+    def get_queryset(self, start_date_time, end_date_time):
         return Order.objects.filter(
-            create_time__date__gte=start_date,
-            create_time__date__lte=end_date,
+            create_time__gte=start_date_time,
+            create_time__lte=end_date_time,
             status="P",  # Only consider Paid orders
         )
 
     def list(self, request, *args, **kwargs):
-        current_date = now().date()
-        seven_days_ago = current_date - timedelta(days=6)
-        fourteen_days_ago = current_date - timedelta(days=13)
-        yesterday = current_date - timedelta(days=1)
-        start_of_year = date(current_date.year, 1, 1)  # Start of the current year
+        current_time = now()
+        seven_days_ago = current_time - timedelta(days=6)
+        fourteen_days_ago = current_time - timedelta(days=13)
+        yesterday = current_time - timedelta(days=1)
+        start_of_year = current_time.replace(month=1, day=1)
 
         # Sales of last 7 days
-        last_7_days_sales = self.get_queryset(seven_days_ago, current_date)
+        last_7_days_sales = self.get_queryset(seven_days_ago, current_time)
         last_7_days_sales_data = (
             last_7_days_sales.annotate(day=TruncDay("create_time"))
             .values("day")
@@ -139,17 +150,18 @@ class SalesReportAPIView(generics.ListAPIView):
 
         # Total sales for today
         today_sales_total = (
-            self.get_queryset(current_date, current_date).aggregate(total=Sum("total"))[
-                "total"
-            ]
+            self.get_queryset(
+                current_time.replace(hour=0, minute=0, second=0), current_time
+            ).aggregate(total=Sum("total"))["total"]
             or 0
         )
 
         # Total sales for yesterday
         yesterday_sales_total = (
-            self.get_queryset(yesterday, yesterday).aggregate(total=Sum("total"))[
-                "total"
-            ]
+            self.get_queryset(
+                yesterday.replace(hour=0, minute=0, second=0),
+                yesterday.replace(hour=23, minute=59, second=59),
+            ).aggregate(total=Sum("total"))["total"]
             or 0
         )
 
@@ -166,7 +178,7 @@ class SalesReportAPIView(generics.ListAPIView):
 
         # Year-to-date (YTD) total sales
         year_to_date_sales = (
-            self.get_queryset(start_of_year, current_date).aggregate(
+            self.get_queryset(start_of_year, current_time).aggregate(
                 total=Sum("total")
             )["total"]
             or 0
@@ -174,18 +186,22 @@ class SalesReportAPIView(generics.ListAPIView):
 
         # Total order count for the year
         year_to_date_orders = Order.objects.filter(
-            create_time__date__gte=start_of_year,
+            create_time__gte=start_of_year,
             status="P",  # Only consider Paid orders
         ).count()
 
         # Total orders today
         today_orders_total = Order.objects.filter(
-            create_time__date=current_date, status="P"
+            create_time__gte=current_time.replace(hour=0, minute=0, second=0),
+            create_time__lte=current_time,
+            status="P",
         ).count()
 
         # Total orders yesterday
         yesterday_orders_total = Order.objects.filter(
-            create_time__date=yesterday, status="P"
+            create_time__gte=yesterday.replace(hour=0, minute=0, second=0),
+            create_time__lte=yesterday.replace(hour=23, minute=59, second=59),
+            status="P",
         ).count()
 
         # Calculate order percentage change between today and yesterday
@@ -219,14 +235,14 @@ class SalesReportAPIView(generics.ListAPIView):
                 "percentage_change": percentage_change,
             },
             "total_sales": {
-                "total": year_to_date_sales,  # YTD total sales
-                "percentage_change": today_vs_yesterday_percentage,  # Today vs yesterday percentage change
-                "sales_change": today_vs_yesterday_sales_change,  # Difference in sales between today and yesterday
+                "total": year_to_date_sales,
+                "percentage_change": today_vs_yesterday_percentage,
+                "sales_change": today_vs_yesterday_sales_change,
             },
             "total_order": {
-                "total": year_to_date_orders,  # YTD total orders
-                "order_change": today_vs_yesterday_order_change,  # Order difference between today and yesterday
-                "percentage_change": today_vs_yesterday_order_percentage,  # Percentage change in orders
+                "total": year_to_date_orders,
+                "order_change": today_vs_yesterday_order_change,
+                "percentage_change": today_vs_yesterday_order_percentage,
             },
         }
 
