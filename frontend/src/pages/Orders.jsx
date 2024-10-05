@@ -36,6 +36,7 @@ export default function Orders() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [customerName, setCustomerName] = useState("");
+  const [debouncedCustomerName, setDebouncedCustomerName] = useState("");
   const [newOrder, setNewOrder] = useState({
     customer: null,
     method: null,
@@ -55,7 +56,7 @@ export default function Orders() {
       setLoading(true);
       try {
         const params = new URLSearchParams({
-          customerName,
+          customerName: debouncedCustomerName,
           page: currentPage,
         }).toString();
         const data = await fetchOrders(params);
@@ -70,7 +71,15 @@ export default function Orders() {
       }
     };
     getOrders();
-  }, [currentPage, customerName]);
+  }, [currentPage, debouncedCustomerName]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setDebouncedCustomerName(customerName);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [customerName]);
 
   useEffect(() => {
     if (isFormOpen) {
@@ -113,7 +122,6 @@ export default function Orders() {
     }
   }, [query, customers]);
 
-  // Query for product filtering
   useEffect(() => {
     if (productQuery) {
       setFilteredProducts(
@@ -234,15 +242,15 @@ export default function Orders() {
     }
   };
 
-  if (loading) {
-    return <Loading />;
-  }
-
   const handlePrevPage = () => {
     if (prevPage) {
       setCurrentPage((prev) => prev - 1);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="flex flex-col pt-8">

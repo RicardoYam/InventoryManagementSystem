@@ -30,6 +30,7 @@ export default function Inventories() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [inventorySearch, setInventorySearch] = useState("");
+  const [debouncedInventorySearch, setDebouncedInventorySearch] = useState("");
   const [isFlyOut, setIsFlyOut] = useState(false);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -39,7 +40,7 @@ export default function Inventories() {
       setLoading(true);
       try {
         const params = new URLSearchParams({
-          name: inventorySearch,
+          name: debouncedInventorySearch,
           page: currentPage,
         }).toString();
 
@@ -56,7 +57,15 @@ export default function Inventories() {
     };
 
     getInventories();
-  }, [currentPage, inventorySearch]);
+  }, [currentPage, debouncedInventorySearch]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setDebouncedInventorySearch(inventorySearch);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [inventorySearch]);
 
   const toggleCreateModal = () => setIsCreateModalOpen(!isCreateModalOpen);
 
@@ -160,7 +169,6 @@ export default function Inventories() {
             Create
           </button>
 
-          {/* TODO:Scan */}
           <button className="flex text-white bg-blue-500 text-md rounded-md p-2 gap-1 items-center justify-center">
             <ScanLine size={20} />
           </button>
@@ -177,7 +185,7 @@ export default function Inventories() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
             <input
               type="text"
-              placeholder="Search by customer name"
+              placeholder="Search by inventory name"
               value={inventorySearch}
               onChange={handleInventorySearchChange}
               className="bg-white text-black rounded-2xl pl-10 pr-4 py-2 w-full border-none border-transparent focus:border-transparent focus:ring-0"

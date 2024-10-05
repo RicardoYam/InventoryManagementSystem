@@ -22,7 +22,9 @@ export default function Customers() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [sliderValue, setSliderValue] = useState(10000);
+  const [debouncedSliderValue, setDebouncedSliderValue] = useState(10000);
   const [level, setLevel] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,10 +39,10 @@ export default function Customers() {
       setLoading(true);
       try {
         const params = new URLSearchParams({
-          name,
+          name: searchTerm,
           page: currentPage,
           pointsFrom: 0,
-          pointsEnd: sliderValue,
+          pointsEnd: debouncedSliderValue,
           level,
         }).toString();
 
@@ -57,7 +59,23 @@ export default function Customers() {
       }
     };
     getCustomers();
-  }, [currentPage, name, sliderValue, level]);
+  }, [currentPage, searchTerm, debouncedSliderValue, level]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setSearchTerm(name);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [name]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setDebouncedSliderValue(sliderValue);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [sliderValue]);
 
   const toggleFlyout = () => {
     setIsFlyoutOpen(!isFlyoutOpen);
@@ -97,6 +115,10 @@ export default function Customers() {
     setName(e.target.value);
   };
 
+  const handleSliderChange = (e) => {
+    setSliderValue(e.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newCustomer.name) {
@@ -131,10 +153,6 @@ export default function Customers() {
     } catch (error) {
       console.error("Error creating customer:", error);
     }
-  };
-
-  const handleSliderChange = (e) => {
-    setSliderValue(e.target.value);
   };
 
   const handleTabClick = (level) => {
@@ -191,7 +209,7 @@ export default function Customers() {
                     name="name"
                     value={newCustomer.name}
                     onChange={handleInputChange}
-                    class="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
+                    className="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
                   />
                 </label>
                 <label className="block mb-2">
@@ -201,13 +219,13 @@ export default function Customers() {
                     name="email"
                     value={newCustomer.email}
                     onChange={handleInputChange}
-                    class="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
+                    className="rounded-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
                   />
                 </label>
                 <label className="block mb-2">
                   Phone
-                  <div class="flex">
-                    <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
+                  <div className="flex">
+                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md">
                       +61
                     </span>
                     <input
@@ -215,7 +233,7 @@ export default function Customers() {
                       name="phone"
                       value={newCustomer.phone}
                       onChange={handleInputChange}
-                      class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
+                      className="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
                     ></input>
                   </div>
                 </label>
