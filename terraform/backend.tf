@@ -119,7 +119,7 @@ resource "aws_ecs_service" "imsbackend" {
   name            = "imsbackend"
   cluster         = aws_ecs_cluster.imsbackend.id
   task_definition = aws_ecs_task_definition.imsbackend.arn
-  desired_count   = 2
+  desired_count   = 1
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -177,5 +177,31 @@ resource "aws_lb_listener" "http_listener" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app_tg.arn
+  }
+}
+
+# Auto Scaling
+resource "aws_appautoscaling_target" "imsbackend" {
+  max_capacity       = 3
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.imsbackend.name}/${aws_ecs_service.imsbackend.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  service_namespace  = "ecs"
+  depends_on         = [aws_ecs_service.imsbackend]
+}
+
+resource "aws_appautoscaling_policy" "imsbackend-cpu" {
+  name               = "imsbackend-cpu"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.imsbackend.resource_id
+  scalable_dimension = aws_appautoscaling_target.imsbackend.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.imsbackend.service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ECSServiceAverageCPUUtilization"
+    }
+
+    target_value = 20
   }
 }
