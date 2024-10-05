@@ -2,4 +2,9 @@
 **/venv
 **/.env
 **/node_modules
-**/package-lock.json
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
+*.lock.hcl

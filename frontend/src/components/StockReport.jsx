@@ -8,12 +8,14 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchSales, fetchStockReport } from "../api/sales";
+import Loading from "./Loading";
 
 export default function StockReport() {
-  const [totalSales, setTotalSales] = useState([]);
-  const [totalOrders, setTotalOrders] = useState([]);
-  const [totalCost, setTotalCost] = useState([]);
-  const [totalStock, setTotalStock] = useState([]);
+  const [totalSales, setTotalSales] = useState(null);
+  const [totalOrders, setTotalOrders] = useState(null);
+  const [totalCost, setTotalCost] = useState(null);
+  const [totalStock, setTotalStock] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getSales = async () => {
@@ -22,7 +24,7 @@ export default function StockReport() {
         setTotalSales(data.total_sales);
         setTotalOrders(data.total_order);
       } catch (err) {
-        console.error("Error fetching inventories:", err);
+        console.error("Error fetching sales:", err);
       }
     };
     const getStockReport = async () => {
@@ -31,11 +33,21 @@ export default function StockReport() {
         setTotalCost(data.total_cost_price);
         setTotalStock(data.total_stocks_number);
       } catch (err) {
-        console.error("Error fetching inventories:", err);
+        console.error("Error fetching stock report:", err);
       }
     };
-    getStockReport();
+
+    const fetchData = async () => {
+      await Promise.all([getSales(), getStockReport()]);
+      setLoading(false);
+    };
+
+    fetchData();
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <div className="grid grid-cols-2 grid-rows-2 w-full min-h-56 max-h-72 bg-white gap-4">
       <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4">
@@ -46,17 +58,26 @@ export default function StockReport() {
         <h5 className="leading-none text-2xl font-bold text-gray-900 mt-2 md:text-3xl md:mt-4">
           ${totalSales.total}
         </h5>
-        <div
-          className={`flex text-base font-semibold gap-2 mt-2 items-center ${
-            totalSales.percentage_change > 0 ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          {totalSales.percentage_change}%
-          {totalSales.percentage_change > 0 ? <TrendingUp /> : <TrendingDown />}
-          <h5 className="text-gray-500 text-xs">
-            +${totalSales.sales_change} today
-          </h5>
-        </div>
+        {totalSales.percentage_change === 100 &&
+        totalSales.total === 0 ? null : (
+          <div
+            className={`flex text-base font-semibold gap-2 mt-2 items-center ${
+              totalSales.percentage_change > 0
+                ? "text-green-500"
+                : "text-red-500"
+            }`}
+          >
+            {totalSales.percentage_change}%
+            {totalSales.percentage_change > 0 ? (
+              <TrendingUp />
+            ) : (
+              <TrendingDown />
+            )}
+            <h5 className="text-gray-500 text-xs">
+              +${totalSales.sales_change} today
+            </h5>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4">
@@ -67,23 +88,26 @@ export default function StockReport() {
         <h5 className="leading-none text-2xl font-bold text-gray-900 mt-2 md:text-3xl md:mt-4">
           {totalOrders.total}
         </h5>
-        <div
-          className={`flex text-base font-semibold gap-2 mt-2 items-center ${
-            totalOrders.percentage_change > 0
-              ? "text-green-500"
-              : "text-red-500"
-          }`}
-        >
-          {totalOrders.percentage_change}%
-          {totalOrders.percentage_change > 0 ? (
-            <TrendingUp />
-          ) : (
-            <TrendingDown />
-          )}
-          <h5 className="text-gray-500 text-xs">
-            +{totalOrders.order_change} today
-          </h5>
-        </div>
+        {totalOrders.percentage_change === 100 &&
+        totalOrders.total === 0 ? null : (
+          <div
+            className={`flex text-base font-semibold gap-2 mt-2 items-center ${
+              totalOrders.percentage_change > 0
+                ? "text-green-500"
+                : "text-red-500"
+            }`}
+          >
+            {totalOrders.percentage_change}%
+            {totalOrders.percentage_change > 0 ? (
+              <TrendingUp />
+            ) : (
+              <TrendingDown />
+            )}
+            <h5 className="text-gray-500 text-xs">
+              +{totalOrders.order_change} today
+            </h5>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col rounded-3xl shadow border border-gray-200 px-4 py-4">

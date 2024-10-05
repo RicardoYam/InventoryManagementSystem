@@ -22,13 +22,14 @@ export default function Topbar({ children }) {
           </button>
         </div>
 
+        {/* TODO: ADD Search and mode change */}
         <div className="flex flex-grow justify-end space-x-1 m-1">
-          <button className="border p-2 rounded-xl">
+          {/* <button className="border p-2 rounded-xl">
             <Search />
           </button>
           <button className="border p-2 rounded-xl">
             <Moon />
-          </button>
+          </button> */}
         </div>
 
         <div className="flex-grow-0">
@@ -77,7 +78,7 @@ export default function Topbar({ children }) {
 export function TopbarItem({ icon, text, active, alert }) {
   return (
     <Link
-      to={"dashboard" === text.toLowerCase() ? "" : text.toLowerCase()}
+      to={text.toLowerCase() === "dashboard" ? "/" : `/${text.toLowerCase()}`}
       onClick={() => setExpanded(false)}
     >
       <li

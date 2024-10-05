@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Customer from "../components/Customer";
 import { fetchCustomers, createCustomer } from "../api/customers";
+import Loading from "../components/Loading";
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -23,6 +24,7 @@ export default function Customers() {
   const [name, setName] = useState("");
   const [sliderValue, setSliderValue] = useState(10000);
   const [level, setLevel] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [newCustomer, setNewCustomer] = useState({
     name: "",
@@ -32,6 +34,7 @@ export default function Customers() {
 
   useEffect(() => {
     const getCustomers = async () => {
+      setLoading(true);
       try {
         const params = new URLSearchParams({
           name,
@@ -49,6 +52,8 @@ export default function Customers() {
         setPrevPage(data.previous);
       } catch (err) {
         console.error("Error fetching customers:", err);
+      } finally {
+        setLoading(false);
       }
     };
     getCustomers();
@@ -147,6 +152,10 @@ export default function Customers() {
       setCurrentPage((prev) => prev - 1);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="flex flex-col pt-8">

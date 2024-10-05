@@ -45,7 +45,9 @@ export default function Dashboard() {
       <div className="flex justify-between items-center mt-4 font-semibold">
         <h1 className="text-3xl">Overview</h1>
 
-        <div className="hidden sm:flex">
+        {/* TODO: ADD Search and mode change */}
+
+        {/* <div className="hidden sm:flex">
           <div className="flex-grow-1 mx-8">
             <div className="relative">
               <Search className="absolute left-3 top-2" />
@@ -62,7 +64,7 @@ export default function Dashboard() {
               <Moon />
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">

@@ -14,11 +14,8 @@ import mimetypes
 import json
 import os
 
-
 AWS_S3_REGION = os.getenv("AWS_S3_REGION")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 
 class StockListCreateView(generics.ListCreateAPIView):
@@ -63,12 +60,8 @@ class StockListCreateView(generics.ListCreateAPIView):
             )
             image_type = mimetypes.guess_type(image_file.name)[0]
 
-            s3 = boto3.client(
-                "s3",
-                region_name=AWS_S3_REGION,
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            )
+            session = boto3.Session()
+            s3 = session.client("s3")
 
             try:
                 s3.upload_fileobj(
@@ -121,12 +114,9 @@ class StockRetrieveDeleteUpdateView(generics.RetrieveUpdateDestroyAPIView):
             )
             image_type = mimetypes.guess_type(image_file.name)[0]
 
-            s3 = boto3.client(
-                "s3",
-                region_name=AWS_S3_REGION,
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-            )
+            session = boto3.Session()
+            s3 = session.client("s3")
+
             try:
                 s3.upload_fileobj(
                     image_file,

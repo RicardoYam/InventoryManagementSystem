@@ -12,6 +12,7 @@ import { Oval } from "react-loader-spinner";
 import Inventory from "../components/Inventory";
 import { fetchInventories, createInventory } from "../api/inventories";
 import { inventoryTypes, sizes } from "../util/util";
+import Loading from "../components/Loading";
 
 export default function Inventories() {
   const [inventories, setInventories] = useState([]);
@@ -141,6 +142,10 @@ export default function Inventories() {
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="flex flex-col pt-8">
       <div className="flex justify-between items-center">
@@ -188,41 +193,25 @@ export default function Inventories() {
           </button>
         </div>
 
-        {loading ? (
-          <div className="flex flex-col justify-center items-center py-6">
-            <Oval
-              height={80}
-              width={80}
-              color="#4891ff"
-              visible={true}
-              ariaLabel="oval-loading"
-              secondaryColor="#4891ff"
-              strokeWidth={2}
-              strokeWidthSecondary={2}
-            />
-            <p className="ml-4">Loading...</p>
+        <div>
+          <div className="grid grid-cols-4 p-4 text-xs text-gray-500 border-b justify-center items-center">
+            <span className="text-md text-gray-500">Inventory</span>
+            <span className="text-md text-gray-500">Cost</span>
+            <span className="text-md text-gray-500">Selling</span>
+            <span className="text-md text-gray-500">Stocks</span>
           </div>
-        ) : (
-          <div>
-            <div className="grid grid-cols-4 p-4 text-xs text-gray-500 border-b justify-center items-center">
-              <span className="text-md text-gray-500">Inventory</span>
-              <span className="text-md text-gray-500">Cost</span>
-              <span className="text-md text-gray-500">Selling</span>
-              <span className="text-md text-gray-500">Stocks</span>
-            </div>
 
-            <div className="cursor-pointer">
-              {inventories.map((inventory, index) => (
-                <Inventory
-                  key={inventory.id}
-                  inventory={inventory}
-                  setInventories={setInventories}
-                  className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-                />
-              ))}
-            </div>
+          <div className="cursor-pointer">
+            {inventories.map((inventory, index) => (
+              <Inventory
+                key={inventory.id}
+                inventory={inventory}
+                setInventories={setInventories}
+                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+              />
+            ))}
           </div>
-        )}
+        </div>
 
         <div className="flex justify-between items-center px-4 py-2">
           <div className="text-gray-500">{`Page: ${currentPage}`}</div>

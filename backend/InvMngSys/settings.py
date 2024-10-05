@@ -10,10 +10,36 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-from pathlib import Path
+import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+AWS_S3_REGION = os.getenv("AWS_S3_REGION")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+DATABASE_URI = os.getenv("DATABASE_URI")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
+DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+DATABASE_PORT = os.getenv("DATABASE_PORT")
+
+if not AWS_S3_REGION:
+    raise ValueError("AWS_S3_REGION is not set in the environment.")
+
+if not AWS_STORAGE_BUCKET_NAME:
+    raise ValueError("AWS_STORAGE_BUCKET_NAME is not set in the environment.")
+
+if not DATABASE_URI:
+    raise ValueError("DATABASE_URI is not set in the environment.")
+
+if not DATABASE_NAME:
+    raise ValueError("DATABASE_NAME is not set in the environment.")
+
+if not DATABASE_USERNAME:
+    raise ValueError("DATABASE_USERNAME is not set in the environment.")
+
+if not DATABASE_PASSWORD:
+    raise ValueError("DATABASE_PASSWORD is not set in the environment.")
+
+if not DATABASE_PORT:
+    raise ValueError("DATABASE_PORT is not set in the environment.")
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +51,7 @@ SECRET_KEY = "django-insecure-ujczr&ep6fph)$cgp!ztbcqp=((wq$6v$4-#(sa#@yb=!3sn*=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
@@ -48,6 +74,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "phonenumber_field",
     "corsheaders",
+    "health_check",
     "customer",
     "order",
     "stock",
@@ -67,6 +94,8 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://demoims.com",
+    "https://demoims.com",
 ]
 
 ROOT_URLCONF = "InvMngSys.urls"
@@ -94,9 +123,17 @@ WSGI_APPLICATION = "InvMngSys.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": BASE_DIR / "db.sqlite3",
+    # }
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DATABASE_NAME,
+        "USER": DATABASE_USERNAME,
+        "PASSWORD": DATABASE_PASSWORD,
+        "HOST": DATABASE_URI,
+        "PORT": DATABASE_PORT,
     }
 }
 
@@ -154,15 +191,3 @@ SIMPLE_JWT = {
     "VERIFYING_KEY": None,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
-
-import environ
-import os
-
-env = environ.Env()
-
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
-
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
-AWS_S3_REGION = env("AWS_S3_REGION")
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")

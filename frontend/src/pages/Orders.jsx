@@ -21,6 +21,7 @@ import {
 } from "@headlessui/react";
 import clsx from "clsx";
 import { CheckIcon } from "@heroicons/react/20/solid";
+import Loading from "../components/Loading";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -232,6 +233,10 @@ export default function Orders() {
       setCurrentPage((prev) => prev + 1);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   const handlePrevPage = () => {
     if (prevPage) {
@@ -532,6 +537,120 @@ export default function Orders() {
                   </button>
                 </div>
 
+                <div className="mb-4">
+                  <span>Payment:</span>
+                  <div className="grid grid-cols-3 gap-1 mt-2">
+                    <div className="border flex items-center p-2">
+                      <input
+                        id="wechat"
+                        type="radio"
+                        value="wechat"
+                        name="payment"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        onChange={() =>
+                          setNewOrder((prev) => ({ ...prev, method: "WE" }))
+                        }
+                      />
+                      <label
+                        htmlFor="wechat"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
+                      >
+                        <FaWeixin className="mr-2 w-4" /> WeChat
+                      </label>
+                    </div>
+                    <div className="border flex items-center p-2">
+                      <input
+                        id="alipay"
+                        type="radio"
+                        value="alipay"
+                        name="payment"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        onChange={() =>
+                          setNewOrder((prev) => ({ ...prev, method: "AL" }))
+                        }
+                      />
+                      <label
+                        htmlFor="alipay"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
+                      >
+                        <FaAlipay className="mr-2 w-4" /> AliPay
+                      </label>
+                    </div>
+                    <div className="border flex items-center p-2">
+                      <input
+                        id="transfer"
+                        type="radio"
+                        value="transfer"
+                        name="payment"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        onChange={() =>
+                          setNewOrder((prev) => ({ ...prev, method: "TR" }))
+                        }
+                      />
+                      <label
+                        htmlFor="transfer"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
+                      >
+                        <FaExchangeAlt className="mr-2 w-4" /> Transfer
+                      </label>
+                    </div>
+                    <div className="border flex items-center p-2">
+                      <input
+                        id="cash"
+                        type="radio"
+                        value="cash"
+                        name="payment"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        onChange={() =>
+                          setNewOrder((prev) => ({ ...prev, method: "CA" }))
+                        }
+                      />
+                      <label
+                        htmlFor="cash"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
+                      >
+                        <FaMoneyBill className="mr-2 w-4" /> Cash
+                      </label>
+                    </div>
+                    <div className="border flex items-center p-2">
+                      <input
+                        id="creditcard"
+                        type="radio"
+                        value="creditcard"
+                        name="payment"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        onChange={() =>
+                          setNewOrder((prev) => ({ ...prev, method: "CC" }))
+                        }
+                      />
+                      <label
+                        htmlFor="creditcard"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
+                      >
+                        <FaCreditCard className="mr-2 w-4" /> Card
+                      </label>
+                    </div>
+                    <div className="border flex items-center p-2">
+                      <input
+                        id="credit"
+                        type="radio"
+                        value="credit"
+                        name="payment"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        onChange={() =>
+                          setNewOrder((prev) => ({ ...prev, method: "CR" }))
+                        }
+                      />
+                      <label
+                        htmlFor="credit"
+                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 flex items-center"
+                      >
+                        <FaCoins className="mr-2 w-4" /> Credit
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex flex-col mb-4">
                   <span className="mr-2">Discount:</span>
                   <div className="flex">
@@ -626,39 +745,23 @@ export default function Orders() {
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex flex-col justify-center items-center py-6">
-            <Oval
-              height={50}
-              width={50}
-              color="#4fa94d"
-              visible={true}
-              ariaLabel="oval-loading"
-              secondaryColor="#4fa94d"
-              strokeWidth={2}
-              strokeWidthSecondary={2}
-            />
-            <p className="ml-4">Loading...</p>
+        <div>
+          <div className="grid grid-cols-5 p-4 text-xs text-gray-500 border-b justify-center items-center">
+            <span className="text-md text-gray-500">Customer</span>
+            <span className="text-md text-gray-500">Date</span>
+            <span className="text-md text-gray-500">Amount</span>
+            <span className="text-md text-gray-500">Status</span>
           </div>
-        ) : (
-          <div>
-            <div className="grid grid-cols-5 p-4 text-xs text-gray-500 border-b justify-center items-center">
-              <span className="text-md text-gray-500">Customer</span>
-              <span className="text-md text-gray-500">Date</span>
-              <span className="text-md text-gray-500">Amount</span>
-              <span className="text-md text-gray-500">Status</span>
-            </div>
 
-            {orders.map((order, index) => (
-              <Order
-                key={order.id}
-                order={order}
-                setOrders={setOrders}
-                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-              />
-            ))}
-          </div>
-        )}
+          {orders.map((order, index) => (
+            <Order
+              key={order.id}
+              order={order}
+              setOrders={setOrders}
+              className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+            />
+          ))}
+        </div>
 
         {/* Pagination */}
         <div className="flex justify-between items-center px-4 py-2">

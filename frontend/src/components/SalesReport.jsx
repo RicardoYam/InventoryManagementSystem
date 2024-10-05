@@ -131,14 +131,24 @@ export default function SalesReport() {
           </h5>
           <p className="text-base font-normal text-gray-500">Last 7 days</p>
         </div>
-        <div
-          className={`flex items-center px-2.5 py-0.5 text-base font-semibold gap-2 ${
-            percentageChange > 0 ? "text-green-500" : "text-red-500"
-          }`}
-        >
-          {percentageChange}%
-          {percentageChange > 0 ? <TrendingUp /> : <TrendingDown />}
-        </div>
+        {totalSales === 0 && percentageChange === 100 ? null : (
+          <div
+            className={`flex items-center px-2.5 py-0.5 text-base font-semibold gap-2 ${
+              percentageChange > 0
+                ? "text-green-500"
+                : percentageChange < 0
+                ? "text-red-500"
+                : "text-gray-500"
+            }`}
+          >
+            {percentageChange}%
+            {percentageChange > 0 ? (
+              <TrendingUp />
+            ) : percentageChange < 0 ? (
+              <TrendingDown />
+            ) : null}
+          </div>
+        )}
       </div>
       <div ref={chartRef} id="labels-chart" className="px-4 h-48"></div>
     </div>
