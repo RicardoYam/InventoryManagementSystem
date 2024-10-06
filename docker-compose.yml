@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: imsdb-password
+      POSTGRES_USER: admin
+      POSTGRES_DB: imsdb
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    restart: always
+    environment:
+      DATABASE_URI: database
+      DATABASE_NAME: imsdb
+      DATABASE_USERNAME: admin
+      DATABASE_PASSWORD: imsdb-password
+      DATABASE_PORT: 5432
+      AWS_S3_REGION: ${AWS_S3_REGION}
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
