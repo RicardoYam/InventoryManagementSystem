@@ -82,17 +82,35 @@ IMS is an open-source Inventory Management System which provides powerful featur
 
 
 
-## 🗺️ Architecture
+## Architecture
 
 ![Architecture](./doc/arc.png)
 
 
 
-## 🧰 Getting Started
+## Getting Started
 
 ### Local Deployment
 
+Before starting the deployment, ensure that [Docker](https://www.docker.com/) is installed on your system.
 
+
+
+To start your local deployment, run the following line:
+
+```bash
+docker compose up --build
+```
+
+Now, you can access IMS system via [http://localhost:5173/]() !
+
+
+
+To stop your local deployment, simply run the following line:
+
+```bash
+docker compose down
+```
 
 
 
@@ -100,10 +118,16 @@ IMS is an open-source Inventory Management System which provides powerful featur
 
 Before starting the deployment, ensure that [Terraform](https://www.terraform.io/) is installed on your system.
 
-To configure AWS credentials, navigate to the `/terraform/provider.tf` file and **update** the following line:
+
+
+To configure AWS credentials used by Terraform, navigate to the `/terraform/provider.tf` file and **update** the following line:
 
 ```Terraform
-profile = "iamadmin-test" # AWS profile name
+provider "aws" {
+  ...
+  profile = "iamadmin-test" # UPDATE as your AWS profile name
+	...
+}
 ```
 
 or, **delete** this line to use default configuration.
@@ -117,11 +141,17 @@ terraform init
 terraform apply
 ```
 
+and, run the following command to destroy your deployment:
+
+```bash
+terraform destroy
+```
+
 
 
 ## Screenshots
 
-VPN Deployment by Terraform
+VPC Deployment by Terraform
 
 ![](./doc/vpc.png)
 
