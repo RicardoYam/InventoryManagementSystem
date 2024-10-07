@@ -6,7 +6,7 @@
   <p>
     Open source Inventory Management System for clothing business👗
   </p>
-  <img src="./doc/dashboard_2.png" alt="Dashboard" width="500" />
+  <img src="./doc/dashboard_2.png" alt="Dashboard" width="700" />
   <h4>
     <a href="https://demoims.com">View Demo</a>
 	</h4>
