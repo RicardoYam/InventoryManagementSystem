@@ -137,6 +137,7 @@ resource "aws_ecs_service" "imsbackend" {
   depends_on = [aws_lb_listener.http_listener]
 }
 
+# ALB for backend service
 resource "aws_lb" "imsbackend" {
   name               = "imsbackend"
   internal           = false
@@ -151,6 +152,7 @@ resource "aws_lb" "imsbackend" {
   }
 }
 
+# Target group
 resource "aws_lb_target_group" "app_tg" {
   name     = "app-target-group"
   port     = 8000
@@ -169,14 +171,45 @@ resource "aws_lb_target_group" "app_tg" {
   }
 }
 
+# HTTP Listener
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.imsbackend.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# HTTPS Listener
+resource "aws_lb_listener" "https_listener" {
+  load_balancer_arn = aws_lb.imsbackend.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = var.acm_certificate_backend_arn
+
+  default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app_tg.arn
+  }
+}
+
+# Route 53 DNS record pointing to ALB
+resource "aws_route53_record" "imsbackend_record" {
+  zone_id = var.route53_zone_backend_id
+  name    = var.backend_domain_name
+  type    = "A"
+  alias {
+    name                   = aws_lb.imsbackend.dns_name
+    zone_id                = aws_lb.imsbackend.zone_id
+    evaluate_target_health = true
   }
 }
 

@@ -25,7 +25,7 @@ class Order(models.Model):
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, null=True, blank=True, related_name="orders"
     )
-    create_time = models.DateTimeField(auto_now_add=True)
+    create_time = models.DateTimeField()
     update_time = models.DateTimeField(auto_now=True)
 
     class Meta:

@@ -10,3 +10,4 @@ terraform.tfstate.backup
 *.lock.hcl
 *.DS_Store
 *sql_insert.py
+**variables.tf

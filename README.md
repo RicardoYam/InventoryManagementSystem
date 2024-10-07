@@ -6,6 +6,7 @@
   <p>
     Open source Inventory Management System for clothing business👗
   </p>
+  <img src="./doc/dashboard_2.png" alt="Dashboard" width="500" />
   <h4>
     <a href="https://demoims.com">View Demo</a>
 	</h4>
@@ -126,7 +127,6 @@ To configure AWS credentials used by Terraform, navigate to the `/terraform/prov
 provider "aws" {
   ...
   profile = "iamadmin-test" # UPDATE as your AWS profile name
-	...
 }
 ```
 
@@ -134,7 +134,43 @@ or, **delete** this line to use default configuration.
 
 
 
-To start your deployment, run the following line:
+Additionally, to certify your two domains (frontend and backend) via AWS Certificate Manager, create a new file named `variables.tf` under the `/terraform` folder. Add the following lines to the file, replacing the placeholders with your values.
+
+```Terraform
+variable "backend_domain_name" {
+  type    = string
+  default = "..." # e.g. demoims-backend.com
+}
+
+variable "acm_certificate_backend_arn" {
+  type    = string
+  default = "..."
+}
+
+variable "route53_zone_backend_id" {
+  type    = string
+  default = "..."
+}
+
+variable "frontend_domain_name" {
+  type    = string
+  default = "..." # e.g. demoims.com
+}
+
+variable "acm_certificate_frontend_arn" {
+  type    = string
+  default = "..."
+}
+
+variable "route53_zone_frontend_id" {
+  type    = string
+  default = "..."
+}
+```
+
+
+
+Now, you can start your deployment, run the following line:
 
 ```bash
 terraform init

@@ -33,11 +33,9 @@ class OrderList(generics.ListCreateAPIView):
         discount = request.data.get("discount", None)
         round_value = request.data.get("round", None)
 
-        print(request.data)
-
         total = 0
 
-        # check enough stock and process order in stock
+        # Check stock availability and calculate total
         for item in request.data.get("items"):
             ordered_quantity = item.get("quantity")
             stock_id = item.get("stock_id")
@@ -59,24 +57,28 @@ class OrderList(generics.ListCreateAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        # e.g. discount: 80
+        # Apply discount and rounding if applicable
         if discount:
             total *= decimal.Decimal(discount) / decimal.Decimal(100)
 
         if round_value:
             total -= decimal.Decimal(round_value)
 
-        # max_digits=6
+        # Round to two decimal places
         total = total.quantize(decimal.Decimal("0.01"), rounding=decimal.ROUND_HALF_UP)
 
+        # Set total in request data
         request.data["total"] = total
 
-        # add points
+        # Set the current time as `create_time`
+        request.data["create_time"] = now()
+
+        # Add points to the customer
         customer = Customer.objects.get(id=request.data["customer"])
         customer.points += int(total)
         customer.save()
 
-        # create order
+        # Create order
         response = super().create(request, *args, **kwargs)
         response.data["customer_name"] = customer.name
 
