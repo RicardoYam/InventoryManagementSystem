@@ -14,6 +14,7 @@ import mimetypes
 import json
 import os
 
+
 AWS_S3_REGION = os.getenv("AWS_S3_REGION")
 AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 

@@ -33,6 +33,8 @@ class OrderList(generics.ListCreateAPIView):
         discount = request.data.get("discount", None)
         round_value = request.data.get("round", None)
 
+        print(request.data)
+
         total = 0
 
         # Check stock availability and calculate total
@@ -144,9 +146,9 @@ class SalesReportAPIView(generics.ListAPIView):
 
         # Calculate percentage change for last 7 days vs previous 7 days
         if prev_7_days_total > 0:
-            percentage_change = (
-                (last_7_days_total - prev_7_days_total) / prev_7_days_total
-            ) * 100
+            percentage_change = round(
+                ((last_7_days_total - prev_7_days_total) / prev_7_days_total) * 100, 2
+            )
         else:
             percentage_change = 100
 
@@ -169,9 +171,11 @@ class SalesReportAPIView(generics.ListAPIView):
 
         # Calculate percentage change between today and yesterday
         if yesterday_sales_total > 0:
-            today_vs_yesterday_percentage = (
-                (today_sales_total - yesterday_sales_total) / yesterday_sales_total
-            ) * 100
+            today_vs_yesterday_percentage = round(
+                ((today_sales_total - yesterday_sales_total) / yesterday_sales_total)
+                * 100,
+                2,
+            )
         else:
             today_vs_yesterday_percentage = 100
 
@@ -208,9 +212,11 @@ class SalesReportAPIView(generics.ListAPIView):
 
         # Calculate order percentage change between today and yesterday
         if yesterday_orders_total > 0:
-            today_vs_yesterday_order_percentage = (
-                (today_orders_total - yesterday_orders_total) / yesterday_orders_total
-            ) * 100
+            today_vs_yesterday_order_percentage = round(
+                ((today_orders_total - yesterday_orders_total) / yesterday_orders_total)
+                * 100,
+                2,
+            )
         else:
             today_vs_yesterday_order_percentage = 100
 

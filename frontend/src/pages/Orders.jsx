@@ -8,6 +8,7 @@ import {
   FaCreditCard,
   FaCoins,
 } from "react-icons/fa";
+import { CircleAlert } from "lucide-react";
 import Order from "../components/Order";
 import { fetchOrders, createOrder } from "../api/orders";
 import { fetchCustomers } from "../api/customers";
@@ -215,6 +216,7 @@ export default function Orders() {
     setCreatingOrder(true);
 
     try {
+      console.log(formattedOrder);
       const createdOrder = await createOrder(formattedOrder);
 
       setNewOrder({
@@ -229,7 +231,7 @@ export default function Orders() {
       setOrders(updatedOrders.results);
       setTotalOrders(updatedOrders.count);
     } catch (err) {
-      setErrorMessage("Error creating order.");
+      setErrorMessage(err.response.data.error);
       console.error("Error creating order:", err);
     } finally {
       setCreatingOrder(false);
@@ -265,7 +267,6 @@ export default function Orders() {
         </button>
       </div>
 
-      {/* Flyout form */}
       {creatingOrder ? (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-50">
           <Oval
@@ -312,7 +313,7 @@ export default function Orders() {
                       onFocus={() => setQuery("")}
                       onChange={(event) => setQuery(event.target.value)}
                       className={clsx(
-                        "max-w-40 rounded-lg text-black",
+                        "max-w-48 rounded-lg text-black",
                         "focus:outline-none"
                       )}
                     />
@@ -358,12 +359,25 @@ export default function Orders() {
                     const productStocks = item.product
                       ? item.product.stocks
                       : [];
-                    const availableColors = [
-                      ...new Set(productStocks.map((stock) => stock.color)),
-                    ];
-                    const availableSizes = [
-                      ...new Set(productStocks.map((stock) => stock.size)),
-                    ];
+                    const availableColors = item.size
+                      ? [
+                          ...new Set(
+                            productStocks
+                              .filter((stock) => stock.size === item.size)
+                              .map((stock) => stock.color)
+                          ),
+                        ]
+                      : [...new Set(productStocks.map((stock) => stock.color))];
+
+                    const availableSizes = item.color
+                      ? [
+                          ...new Set(
+                            productStocks
+                              .filter((stock) => stock.color === item.color)
+                              .map((stock) => stock.size)
+                          ),
+                        ]
+                      : [...new Set(productStocks.map((stock) => stock.size))];
 
                     return (
                       <div key={index} className="grid grid-cols-4 gap-4 mb-2">
@@ -395,7 +409,7 @@ export default function Orders() {
                             anchor="bottom"
                             className={clsx(
                               "w-[var(--input-width)] rounded-xl bg-white border p-1 [--anchor-gap:var(--spacing-1)] empty:invisible",
-                              "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50"
+                              "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50 overflow-auto"
                             )}
                           >
                             {filteredProducts.map((product) => (
@@ -443,7 +457,7 @@ export default function Orders() {
                             anchor="bottom"
                             className={clsx(
                               "w-[var(--input-width)] rounded-xl bg-white border p-1 [--anchor-gap:var(--spacing-1)] empty:invisible",
-                              "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50"
+                              "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50 overflow-auto"
                             )}
                           >
                             {availableSizes.map((size, idx) => (
@@ -491,7 +505,7 @@ export default function Orders() {
                             anchor="bottom"
                             className={clsx(
                               "w-[var(--input-width)] rounded-xl bg-white border p-1 [--anchor-gap:var(--spacing-1)] empty:invisible",
-                              "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50"
+                              "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-50 overflow-auto"
                             )}
                           >
                             {availableColors.map((color, idx) => (
@@ -696,7 +710,6 @@ export default function Orders() {
                   </div>
                 </div>
 
-                {/* Total Price Calculation */}
                 <div className="mb-4">
                   <span className="mr-2 text-lg font-bold">Total Price:</span>
                   <span className="text-lg font-bold">
@@ -705,8 +718,9 @@ export default function Orders() {
                 </div>
 
                 {errorMessage && (
-                  <div className="text-red-500 text-sm mb-4">
-                    {errorMessage}
+                  <div className="flex mt-4 p-2 gap-2 rounded-lg bg-red-200 items-center mb-8">
+                    <CircleAlert className="text-red-500" />
+                    <span className="text-red-500">{errorMessage}</span>
                   </div>
                 )}
 
@@ -771,7 +785,6 @@ export default function Orders() {
           ))}
         </div>
 
-        {/* Pagination */}
         <div className="flex justify-between items-center px-4 py-2">
           <div className="text-gray-500">{`Page: ${currentPage}`}</div>
           <div className="flex items-center space-x-2">

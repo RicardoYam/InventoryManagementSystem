@@ -49,11 +49,12 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
   }
 
   enabled             = true
+  default_root_object = "index.html"
 
   aliases = [var.frontend_domain_name]
 
   default_cache_behavior {
-    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = "S3-${var.frontend_domain_name}"
 
@@ -68,6 +69,20 @@ resource "aws_cloudfront_distribution" "frontend_distribution" {
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
+  }
+
+  custom_error_response {
+    error_code            = 403
+    response_page_path    = "/index.html"
+    response_code         = 200
+    error_caching_min_ttl = 0
+  }
+
+  custom_error_response {
+    error_code            = 404
+    response_page_path    = "/index.html"
+    response_code         = 200
+    error_caching_min_ttl = 0
   }
 
   viewer_certificate {

@@ -83,6 +83,27 @@ IMS is an open-source Inventory Management System which provides powerful featur
 
 
 
+<h3>✅ Implement List</h3>
+
+<div>
+  <label>
+    <input type="checkbox" />
+    Add stock by using scanner
+  </label>
+  <br />
+  <label>
+    <input type="checkbox" />
+    Forget password (AWS Lambda)
+  </label>
+  <br />
+  <label>
+    <input type="checkbox" />
+    Stock info autofilling (ML)
+  </label>
+</div>
+
+
+
 ## Architecture
 
 ![Architecture](./doc/arc.png)
@@ -177,6 +198,8 @@ terraform init
 terraform apply
 ```
 
+![Finish Message](./doc/finish.png)
+
 and, run the following command to destroy your deployment:
 
 ```bash
@@ -186,6 +209,24 @@ terraform destroy
 
 
 ## Screenshots
+
+Dashboard page
+
+![Dashboard](./doc/dashboard_2.png)
+
+
+
+Customer page
+
+![Customer](./doc/customer.png)
+
+
+
+Product details page
+
+![Detail](./doc/stock.png)
+
+
 
 VPC Deployment by Terraform
 
@@ -205,3 +246,18 @@ ECS Deployment by Terraform
 
 
 
+ECS Task Deployment by Terraform
+
+![ECS Task](./doc/Ecs_Task.png)
+
+
+
+CloudFront Deployment by Terraform
+
+![CloudFront](./doc/Cloudfront.png)
+
+
+
+Route 53 Deployment by Terraform
+
+![Route 53](./doc/Route53.png)

@@ -161,7 +161,7 @@ resource "aws_lb_target_group" "app_tg" {
   target_type = "ip"
 
   health_check {
-    path                = "/ht/"
+    path                = "/api/v1/login/"
     port                = 8000
     protocol            = "HTTP"
     interval            = 30

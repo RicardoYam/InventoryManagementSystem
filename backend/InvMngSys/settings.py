@@ -74,7 +74,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "phonenumber_field",
     "corsheaders",
-    "health_check",
     "customer",
     "order",
     "stock",
