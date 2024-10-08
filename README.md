@@ -83,21 +83,18 @@ IMS is an open-source Inventory Management System which provides powerful featur
 
 
 
-<h3>✅ Implement List</h3>
+<h3>✅ To be implemented</h3>
 
 <div>
   <label>
-    <input type="checkbox" />
     Add stock by using scanner
   </label>
   <br />
   <label>
-    <input type="checkbox" />
     Forget password (AWS Lambda)
   </label>
   <br />
   <label>
-    <input type="checkbox" />
     Stock info autofilling (ML)
   </label>
 </div>
@@ -248,7 +245,7 @@ ECS Deployment by Terraform
 
 ECS Task Deployment by Terraform
 
-![ECS Task](./doc/Ecs_Task.png)
+![ECS Task](./doc/ECS_Task.png)
 
 
 
