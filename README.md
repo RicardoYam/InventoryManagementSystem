@@ -16,8 +16,6 @@
 
 IMS is an open-source Inventory Management System which provides powerful features for stock control, customer management and order placement, deployed on highly available AWS services. The system is built on a Python/Django-based database backend, coupled with an interactive React-based frontend, providing an intuitive interface for shop managers to efficiently manage operations.
 
-
-
 ### 👾 Tech Stack
 
 <details>
@@ -73,15 +71,11 @@ IMS is an open-source Inventory Management System which provides powerful featur
   </ul>
 </details>
 
-
-
 <h3>🔒 Demo Account</h3>
 
 **Account:** Admin
 
-**Password:**  123456
-
-
+**Password:** 123456
 
 <h3>✅ Implement List</h3>
 
@@ -102,21 +96,15 @@ IMS is an open-source Inventory Management System which provides powerful featur
   </label>
 </div>
 
-
-
 ## Architecture
 
 ![Architecture](./doc/arc.png)
-
-
 
 ## Getting Started
 
 ### Local Deployment
 
 Before starting the deployment, ensure that [Docker](https://www.docker.com/) is installed on your system.
-
-
 
 To start your local deployment, run the following line:
 
@@ -126,21 +114,15 @@ docker compose up --build
 
 Now, you can access IMS system via [http://localhost:5173/]() !
 
-
-
 To stop your local deployment, simply run the following line:
 
 ```bash
 docker compose down
 ```
 
-
-
 ### AWS Deployment
 
 Before starting the deployment, ensure that [Terraform](https://www.terraform.io/) is installed on your system.
-
-
 
 To configure AWS credentials used by Terraform, navigate to the `/terraform/provider.tf` file and **update** the following line:
 
@@ -152,8 +134,6 @@ provider "aws" {
 ```
 
 or, **delete** this line to use default configuration.
-
-
 
 Additionally, to certify your two domains (frontend and backend) via AWS Certificate Manager, create a new file named `variables.tf` under the `/terraform` folder. Add the following lines to the file, replacing the placeholders with your values.
 
@@ -189,8 +169,6 @@ variable "route53_zone_frontend_id" {
 }
 ```
 
-
-
 Now, you can start your deployment, run the following line:
 
 ```bash
@@ -206,58 +184,44 @@ and, run the following command to destroy your deployment:
 terraform destroy
 ```
 
-
-
 ## Screenshots
 
 Dashboard page
 
 ![Dashboard](./doc/dashboard_2.png)
 
-
-
 Customer page
 
 ![Customer](./doc/customer.png)
-
-
 
 Product details page
 
 ![Detail](./doc/stock.png)
 
-
-
 VPC Deployment by Terraform
 
 ![](./doc/vpc.png)
-
-
 
 RDS Deployment by Terraform
 
 ![RDS](./doc/rds.png)
 
-
-
 ECS Deployment by Terraform
 
 ![ECS](./doc/ecs.png)
-
-
 
 ECS Task Deployment by Terraform
 
 ![ECS Task](./doc/Ecs_Task.png)
 
-
-
 CloudFront Deployment by Terraform
 
 ![CloudFront](./doc/Cloudfront.png)
 
-
-
 Route 53 Deployment by Terraform
 
 ![Route 53](./doc/Route53.png)
+
+## License
+
+[MIT License](LICENSE)
