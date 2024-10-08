@@ -85,10 +85,6 @@ IMS is an open-source Inventory Management System which provides powerful featur
   </label>
   <br />
   <label>
-    Forget password (AWS Lambda)
-  </label>
-  <br />
-  <label>
     Stock info autofilling (ML)
   </label>
 </div>
