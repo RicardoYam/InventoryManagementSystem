@@ -8,7 +8,7 @@
   </p>
   <img src="./doc/dashboard_2.png" alt="Dashboard" width="700" />
   <h4>
-    <a href="https://demoims.com">View Demo</a>
+    <a href="https://demoims.com">Visit Now</a>
 	</h4>
 </div>
 
